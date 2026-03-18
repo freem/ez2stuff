@@ -20,21 +20,10 @@ const char* OldNoteNames[] = {
 #define OLDNOTE_MAX_OCTAVE 21
 
 typedef struct{
-	uint8_t note; /* 0-11 */
-	uint8_t oct;  /* 0-21 */
-} OldNote;
-
-typedef struct{
-	OldNote note;
+	uint16_t index; /* only uint8_t in old version files */
 	int type;
-	char *filename;
-} OldInstrument;
-
-typedef struct{
-	uint16_t index;
-	int type;
-	char *filename;
-} NewInstrument;
+	char filename[256];
+} Instrument;
 
 /* Converts a keysound number (0-255) to an index to use with OldNoteNames. */
 static uint8_t KeysoundIndexToNote(int index){
@@ -50,6 +39,10 @@ static uint8_t KeysoundIndexToOctave(int index){
 		return -1;
 	}
 	return floor(index / OLDNOTE_NOTE_VALUES);
+}
+
+static uint8_t NoteOctaveToKeysoundIndex(int note, int oct){
+	return (oct*OLDNOTE_NOTE_VALUES)+note;
 }
 
 #endif
