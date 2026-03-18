@@ -518,7 +518,21 @@ File starts with `EZREPLAY_V1` string. Not fully researched yet.
 -----
 
 ## `.scr` &ndash; Animation Script
-Defines the order and timing of animations (`.str` files).
+Defines the timing of animations (i.e. when `.str` files are played back).
+Despite sharing a file extension with Windows screen savers, they are not
+implemented as screen savers.
+
+There are multiple `.scr` formats:
+- The earliest known version does not include the "SCR0" string found in later versions.
+- The first appearance of `.scr` files with the "SCR0" header is in EZ2DJ 2nd Trax.
+
+### Header (newer version)
+- 0x00-0x03: [char*] "`SCR0`" string (0x53, 0x43, 0x52, 0x30)
+- 0x04-0x07: [int] ?
+- 0x08-0x0B: [int] ?
+- 0x0C-0x0F: [int] ?
+- 0x10-0x13: [int] ?
+- 0x14-0x17: [int] ?
 
 (todo)
 
