@@ -24,6 +24,18 @@ Displays the following information:
 - total ticks
 - per-track data, including notes (handles commands 1-4)
 
+## `ezins`
+Displays information about (decoded) `.ezi` files. Both old and new versions
+are supported.
+
+Usage: `ezins [file.ezi]`
+
+Displays:
+- format type ("new" or "old)
+- each entry, including equivalent keysound index (for old files) or key/octave pair (for new files; 0-255 only)
+
+Converting between `.ezi` versions is not yet available, but is planned.
+
 ## `ezdec_715`, `ezenc_715`
 Utilities related to encoding and decoding EZ2DJ 7th Trax v1.5 `.ez` files.
 
