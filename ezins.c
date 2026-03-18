@@ -56,7 +56,12 @@ int main(int argc, char** argv){
 		if(fileVer == 1){
 			/* keysound_index type filename */
 			sscanf(lineBuf,"%hi %d %s",&ins.index,&ins.type,ins.filename);
-			printf("%hi (== %s%d) %d %s",ins.index,OldNoteNames[KeysoundIndexToNote(ins.index)],KeysoundIndexToOctave(ins.index),ins.type,ins.filename);
+			if(ins.index < 256){
+				printf("%hi (== %s%d) %d %s",ins.index,OldNoteNames[KeysoundIndexToNote(ins.index)],KeysoundIndexToOctave(ins.index),ins.type,ins.filename);
+			}
+			else{
+				printf("%hi (n/a) %d %s",ins.index,ins.type,ins.filename);
+			}
 		}
 		else{
 			/* key_name type filename */
