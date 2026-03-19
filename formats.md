@@ -450,6 +450,16 @@ RightBoader = {
 - `MissStr`
 - `FailStr`
 
+### `[JudgmentTex]`
+This is the version with fast/slow indicators.
+- `Enable`
+- `KoolTex`
+- `FastCoolTex`
+- `SlowCoolTex`
+- `GoodTex`
+- `MissTex`
+- `FailTex`
+
 ### `[CoolCombo]`
 - `Enable`
 - `Font`
@@ -513,7 +523,18 @@ Then, for each possible NoteAniTexture:
 -----
 
 ## `.rep` &ndash; Replay Data
-File starts with `EZREPLAY_V1` string. Not fully researched yet.
+Originally used for Virtual Battle mode in EZ2DJ 6th Trax.
+Replay support was removed in EZ2AC Evolve.
+
+There are two known versions, differentiated by the initial string:
+- `EZREPLAY_V1`, 0x1A
+- `EZREPLAY_V1.1`, 0x1A
+
+Filename follows a pattern: `replay_[mode]_[songchart]`.
+
+All of the pre-existing `.rep` files use `StreetMix` as `[mode]`.
+
+Not fully researched yet.
 
 -----
 
