@@ -2,8 +2,30 @@ EZ2DJ/EZ2AC File Formats
 ========================
 
 ## `.abm` &ndash; AmuseWorld Bitmap
+Microsoft device-independent `.bmp` format with a modified header.
 
-(todo)
+### Primary Header
+- 0x00-0x01: "`AW`" string (0x41, 0x57)
+- 0x02-0x05: [int] Number of bits per pixel (copied from original `.bmp` offset 0x1C-0x1F)
+- 0x06-0x07: [short] Image Width
+- 0x08-0x09: [short] Image Height
+- 0x0A-0x0D: (original `.bmp` data XOR `0x109A`)
+
+### Modified Windows `BITMAPINFOHEADER`
+- 0x0E-0x11: [int] size of `BITMAPINFOHEADER`
+- 0x12-0x15: (original `.bmp` data XOR `0xCFA1`)
+- 0x16-0x19: (original `.bmp` data XOR `0x51AE`)
+- 0x1A-0x1B: [short] Number of color planes ("must be 1")
+- 0x1C-0x21: (original `.bmp` data XOR `0xB18F`)
+- 0x22-0x25: [int] Bitmap data size
+- 0x26-0x29: [int] Horizontal resolution (pixels per meter)
+- 0x2A-0x2D: [int] Vertical resolution (pixels per meter)
+- 0x2E-0x31: [int] Number of colors in color palette (0 for non-paletted images)
+- 0x22-0x35: [int] "Number of important colors"
+
+Pixel data follows.
+
+It is not currently known if paletted or compressed images exist.
 
 -----
 
@@ -132,7 +154,7 @@ Track numbering starts at 0.
 
 - `type` &ndash; Track type number (see below).
 - `name` &ndash; Name of this track.
-- `songtrack` &ndash; Defines track number to export notes to.
+- `songtrack` &ndash; Defines track number to export notes to (see below).
 - `width` &ndash; Defines width of track in pixels.
 - `bold` &ndash; If set to 1, the vertical line preceding this track will be bold.
 
@@ -347,6 +369,8 @@ Track1=
 }
 ```
 
+For `SongTrack` values, see "Songtrack Values" in the `.ets` section.
+
 ### `[Gauge]`
 - `Type` &ndash; (int)
 
@@ -392,7 +416,7 @@ Slot1 =
 INI-style format used to describe game panel visuals.
 
 ### `[General]`
-- `NumberOfTrack` &ndash; Number of playable tracks.
+- `NumberOfTrack` &ndash; [int] Number of playable tracks.
 
 ### `[Track#]`
 Track numbering starts at 1.
@@ -510,6 +534,8 @@ This is the version with fast/slow indicators.
 - `FrontTexture`
 
 ### `[TargetBar]`
+Defines the target line/receptors.
+
 - `Enable`
 
 Then, for each possible NoteAniTexture:
