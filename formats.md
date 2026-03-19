@@ -16,12 +16,13 @@ Microsoft device-independent `.bmp` format with a modified header.
 - 0x12-0x15: (original `.bmp` data XOR `0xCFA1`)
 - 0x16-0x19: (original `.bmp` data XOR `0x51AE`)
 - 0x1A-0x1B: [short] Number of color planes ("must be 1")
-- 0x1C-0x21: (original `.bmp` data XOR `0xB18F`)
+- 0x1C-0x1F: (original `.bmp` data XOR `0xB18F`)
+- 0x20-0x21: [short] ??
 - 0x22-0x25: [int] Bitmap data size
 - 0x26-0x29: [int] Horizontal resolution (pixels per meter)
 - 0x2A-0x2D: [int] Vertical resolution (pixels per meter)
 - 0x2E-0x31: [int] Number of colors in color palette (0 for non-paletted images)
-- 0x22-0x35: [int] "Number of important colors"
+- 0x32-0x35: [int] "Number of important colors"
 
 Pixel data follows.
 
