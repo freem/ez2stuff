@@ -4,19 +4,29 @@ EZ2DJ/EZ2AC File Formats
 ## `.abm` &ndash; AmuseWorld Bitmap
 Microsoft device-independent `.bmp` format with a modified header.
 
+There are a few different versions:
+- The old version was used from 2nd Trax through Endless Circulation.
+- Starting from Evolve, the format was slightly changed, and the XOR constants were changed on a per-game basis.
+- The old version returned to being used in Time Traveler, though the XOR constants continued to change.
+
 ### Primary Header
+This describes the oldest version. Evolve and later have some differences.
 - 0x00-0x01: "`AW`" string (0x41, 0x57)
 - 0x02-0x05: [int] Number of bits per pixel (copied from original `.bmp` offset 0x1C-0x1F)
 - 0x06-0x07: [short] Image Width
 - 0x08-0x09: [short] Image Height
-- 0x0A-0x0D: (original `.bmp` data XOR `0x109A`)
+- 0x0A-0x0D: [int] Data start address, XOR'ed by a constant (see below table)
+
+In the newer version (Evolve, NT; maybe TT and regular FN too), offset 0x02-0x05 is the total file size in bytes.
+
+In Time Traveler, offset 0x02-0x05 has been reverted back to bits per pixel.
 
 ### Modified Windows `BITMAPINFOHEADER`
 - 0x0E-0x11: [int] size of `BITMAPINFOHEADER`
-- 0x12-0x15: (original `.bmp` data XOR `0xCFA1`)
-- 0x16-0x19: (original `.bmp` data XOR `0x51AE`)
+- 0x12-0x15: [int] Image Width, XOR'ed by a constant (see below table)
+- 0x16-0x19: [int] Image Height, XOR'ed by a constant (see below table)
 - 0x1A-0x1B: [short] Number of color planes ("must be 1")
-- 0x1C-0x1F: (original `.bmp` data XOR `0xB18F`)
+- 0x1C-0x1F: [int] Bits per pixel, XOR'ed by a constant (see below table)
 - 0x20-0x21: [short] ??
 - 0x22-0x25: [int] Bitmap data size
 - 0x26-0x29: [int] Horizontal resolution (pixels per meter)
@@ -24,9 +34,18 @@ Microsoft device-independent `.bmp` format with a modified header.
 - 0x2E-0x31: [int] Number of colors in color palette (0 for non-paletted images)
 - 0x32-0x35: [int] "Number of important colors"
 
-Pixel data follows.
+Pixel data follows, padded to a 4 byte boundary if necessary.
 
 It is not currently known if paletted or compressed images exist.
+
+### XOR Constants
+
+| Offsets   | Old    | Evolve | NT     | TT     | Final  | Final EX |
+|-----------|--------|--------|--------|--------|--------|----------|
+| 0x0A-0x0D | 0x56FE | 0x45AE | 0x85BE | 0x95AB | 0x23FF | 0x109A   |
+| 0x12-0x15 | 0x0831 | 0x9AF1 | 0x96EC | 0x45BB | 0xBDC9 | 0xCFA1   |
+| 0x16-0x19 | 0x1019 | 0x1D1B | 0xFDEB | 0xAE12 | 0x1F01 | 0x51AE   |
+| 0x1C-0x1F | 0x1120 | 0x678E | 0x679E | 0x78EF | 0xA97F | 0xB18F   |
 
 -----
 
