@@ -11,7 +11,7 @@
  * this program needs to handle multiple functions:
  * + display abm info   | --info (infile.abm)
  * - convert abm to bmp | --tobmp (ver) (infile.abm) [outfile.bmp]
- * - convert bmp to abm | --toabm (ver) (infile.bmp) [outfile.abm]
+ * ~ convert bmp to abm | --toabm (ver) (infile.bmp) [outfile.abm]
  * if that looks simple, consider that you need to do it over 6 different formats.
  */
 
@@ -307,9 +307,9 @@ int main(int argc, char** argv){
 				/* todo: determine total output file size */
 			}
 
+			fclose(outFile);
 			printf("%s: Wrote output to %s\n",argv[0],outFilename);
 			free(outFilename);
-			fclose(outFile);
 		}
 		else{
 			printf("Error: Unexpected ABM header magic { 0x%02X, 0x%02X }\n",fileMagic[0],fileMagic[1]);
@@ -430,6 +430,15 @@ int main(int argc, char** argv){
 			fwrite(&abmHeader.numPalColors,sizeof(uint32_t),1,outFile);
 			fwrite(&abmHeader.numImportantColors,sizeof(uint32_t),1,outFile);
 
+			uint8_t *pixels = calloc(bmpHeader.bitmapDataSize,sizeof(uint8_t));
+			if(pixels == NULL){
+				printf("%s --toabm error: Unable to allocate memory for pixel data\n",argv[0]);
+				exit(EXIT_FAILURE);
+			}
+			fread(pixels,sizeof(uint8_t),bmpHeader.bitmapDataSize,inFile);
+			fwrite(pixels,sizeof(uint8_t),bmpHeader.bitmapDataSize,outFile);
+			fclose(outFile);
+			free(pixels);
 			printf("%s: Wrote output to %s\n",argv[0],outFilename);
 			free(outFilename);
 		}
