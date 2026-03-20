@@ -136,12 +136,17 @@ int main(int argc, char** argv){
 	char fileMagic[3] = {0,0,0};
 	int formatVersion = AbmFormatVersion_Unknown;
 
-	if(argc < 3){
+	if(argc < 2){
 		Usage(argv[0]);
 		exit(EXIT_FAILURE);
 	}
 
 	if(memcmp(argv[1],OptionFlag_Info,6) == 0){
+		if(argc < 3){
+			printf("%s --info needs a filename.\n",argv[0]);
+			exit(EXIT_FAILURE);
+		}
+
 		inFile = fopen(argv[2],"rb");
 		if(inFile == NULL){
 			perror("Error attempting to open input file");
@@ -218,7 +223,12 @@ int main(int argc, char** argv){
 
 		fclose(inFile);
 	}
-	else if(memcmp(argv[1],OptionFlag_ToBmp,6) == 0){
+	else if(memcmp(argv[1],OptionFlag_ToBmp,7) == 0){
+		if(argc < 3){
+			printf("%s --tobmp needs a format and filename.\n",argv[0]);
+			exit(EXIT_FAILURE);
+		}
+
 		inFile = fopen(argv[3],"rb");
 		if(inFile == NULL){
 			perror("--tobmp: Error attempting to open input file");
@@ -318,7 +328,12 @@ int main(int argc, char** argv){
 
 		fclose(inFile);
 	}
-	else if(memcmp(argv[1],OptionFlag_ToAbm,6) == 0){
+	else if(memcmp(argv[1],OptionFlag_ToAbm,7) == 0){
+		if(argc < 3){
+			printf("%s --toabm needs a format and filename.\n",argv[0]);
+			exit(EXIT_FAILURE);
+		}
+
 		if(memcmp(argv[2],FormatName_Auto,4) == 0){
 			printf("'auto' is not a supported format for BMP to ABM conversion; I can't read your mind.\n");
 			exit(EXIT_FAILURE);
