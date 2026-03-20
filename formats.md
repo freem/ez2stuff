@@ -14,12 +14,12 @@ There are a few different versions:
 ### Primary Header
 This describes the oldest version. Evolve and later have some differences.
 - 0x00-0x01: "`AW`" string (0x41, 0x57)
-- 0x02-0x05: [int] Number of bits per pixel (copied from original `.bmp` offset 0x1C-0x1F)
+- 0x02-0x05: [int] (version-dependent) Number of bits per pixel (copied from original `.bmp` offset 0x1C-0x1F) OR total file size.
 - 0x06-0x07: [short] Image Width
 - 0x08-0x09: [short] Image Height
 - 0x0A-0x0D: [int] Data start address, XOR'ed by a constant (see below table)
 
-In the newer version (Evolve, NT; maybe TT and regular FN too), offset 0x02-0x05 is the total file size in bytes.
+In the newer version (Evolve and NT only), offset 0x02-0x05 is the total file size in bytes.
 
 In Time Traveler, offset 0x02-0x05 has been reverted back to bits per pixel.
 
@@ -152,7 +152,8 @@ There are two versions:
 - "old" uses key names and octaves for keysounds, can only support up to 256 sounds.
 - "new" uses indices for keysounds, can support more than 256 sounds.
 
-(todo: what is the number between the note and filename for?)
+General format is `[note/index] [velocity] [filename]`. I have only seen velocity
+be 0 and 1. Unsure if other values are supported or not.
 
 ### Old Format
 Example definition: `C#0 0 filename.wav`
@@ -361,9 +362,16 @@ All names are from EZ2Visual.
 -----
 
 ## `.ezw`, `.ssf` &ndash; Waves/Sound Files
-Earlier games use `.ezw`, later games use `.ssf`. Both formats are the same.
+Earlier games use `.ezw`, later games use `.ssf`. Both formats are the same,
+being derived from Microsoft `.wav` format.
 
-(todo)
+### Header
+ - 0x00-0x01: [short] Number of Channels
+ - 0x02-0x05: [int] Sample Rate
+ - 0x06-0x09: [int] "`(Sample Rate * BitsPerSample * Channels) / 8`"
+ - 0x0A-0x0B: [short] "`(BitsPerSample * Channels) / 8` [1 - 8 bit mono; 2 - 8 bit stereo/16 bit mono; 4 - 16 bit stereo]"
+ - 0x0C-0x0D: [short] Bits per Sample
+ - 0x0E-0x11: [int] Data size
 
 -----
 
@@ -397,6 +405,31 @@ Track1=
 ```
 
 For `SongTrack` values, see "Songtrack Values" in the `.ets` section.
+
+#### Key
+`Key` can have two values. If the second value is `-1`, there is no secondary input action.
+
+Known values:
+- 6 &ndash; Effector 1
+- 7 &ndash; Effector 2
+- 8 &ndash; Effector 3
+- 9 &ndash; Effector 4
+- 10 &ndash; 1P Key 1
+- 11 &ndash; 1P Key 2
+- 12 &ndash; 1P Key 3
+- 13 &ndash; 1P Key 4
+- 14 &ndash; 1P Key 5
+- 15 &ndash; 1P Scratch 1
+- 16 &ndash; 1P Scratch 2
+- 17 &ndash; 1P Pedal
+- 18 &ndash; 2P Key 1
+- 19 &ndash; 2P Key 2
+- 20 &ndash; 2P Key 3
+- 21 &ndash; 2P Key 4
+- 22 &ndash; 2P Key 5
+- 23 &ndash; 2P Scratch 1
+- 24 &ndash; 2P Scratch 2
+- 25 &ndash; 2P Pedal
 
 ### `[Gauge]`
 - `Type` &ndash; (int)
@@ -576,8 +609,8 @@ Then, for each possible NoteAniTexture:
 -----
 
 ## `.rep` &ndash; Replay Data
-Originally used for Virtual Battle mode in EZ2DJ 6th Trax.
-Replay support was removed in EZ2AC Evolve.
+Originally used for Virtual Battle mode in EZ2DJ 6th Trax, also used for attract
+mode gameplay in 7th Mix. Replay support was removed in EZ2AC Evolve.
 
 There are two known versions, differentiated by the initial string:
 - `EZREPLAY_V1`, 0x1A
