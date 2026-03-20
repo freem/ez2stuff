@@ -106,20 +106,19 @@ int main(int argc, char** argv){
 
 #ifndef __ENC
 	/* after decoding, we need to reverse the file */
+	/* xxx: this is kinda broken */
 	fileBuf = (char*)calloc((uint32_t)filesize,1);
 	if(fileBuf == NULL){
 		printf("%s: Unable to allocate memory for file decoding\n",argv[0]);
 		fclose(ezFile);
 		exit(EXIT_FAILURE);
 	}
-	for(int i = 0; i < filesize; i++){
-		fseek(ezFile, i*-1, SEEK_END);
-		fileBuf[i] = fgetc(ezFile);
+	for(int i = filesize-1; i > -1; i--){
+		fseek(ezFile, i, SEEK_SET);
+		fileBuf[filesize-i] = fgetc(ezFile);
 	}
 	fseek(ezFile, 0, SEEK_SET);
-	for(int i = 1; i <= filesize; i++){
-		fputc(fileBuf[i],ezFile);
-	}
+	fwrite(fileBuf,sizeof(char),filesize,ezFile);
 #endif
 
 	fclose(ezFile);
