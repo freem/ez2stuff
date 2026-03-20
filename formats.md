@@ -1,12 +1,14 @@
 EZ2DJ/EZ2AC File Formats
 ========================
+Unless otherwise stated, assume little-endian format. (EZ2DJ targeted
+Windows-running x86 machines from the beginning, after all.)
 
 ## `.abm` &ndash; AmuseWorld Bitmap
 Microsoft device-independent `.bmp` format with a modified header.
 
 There are a few different versions:
 - The old version was used from 2nd Trax through Endless Circulation.
-- Starting from Evolve, the format was slightly changed, and the XOR constants were changed on a per-game basis.
+- In Evolve and Night Traveler, the format was slightly changed, as well as the XOR constants.
 - The old version returned to being used in Time Traveler, though the XOR constants continued to change.
 
 ### Primary Header
@@ -36,16 +38,20 @@ In Time Traveler, offset 0x02-0x05 has been reverted back to bits per pixel.
 
 Pixel data follows, padded to a 4 byte boundary if necessary.
 
+In some games, the primary header's width and/or height is set to 0.
+Presumably, the game will un-XOR the width/height values from the relevant
+`BITMAPINFOHEADER` offsets.
+
 It is not currently known if paletted or compressed images exist.
 
 ### XOR Constants
 
-| Offsets   | Old    | Evolve | NT     | TT     | Final  | Final EX |
-|-----------|--------|--------|--------|--------|--------|----------|
-| 0x0A-0x0D | 0x56FE | 0x45AE | 0x85BE | 0x95AB | 0x23FF | 0x109A   |
-| 0x12-0x15 | 0x0831 | 0x9AF1 | 0x96EC | 0x45BB | 0xBDC9 | 0xCFA1   |
-| 0x16-0x19 | 0x1019 | 0x1D1B | 0xFDEB | 0xAE12 | 0x1F01 | 0x51AE   |
-| 0x1C-0x1F | 0x1120 | 0x678E | 0x679E | 0x78EF | 0xA97F | 0xB18F   |
+| .abm File Offsets | Old      | Evolve   | NT       | TT       | Final    | Final EX   |
+|-------------------|----------|----------|----------|----------|----------|------------|
+| `0x0A-0x0D`       | `0x56FE` | `0x45AE` | `0x85BE` | `0x95AB` | `0x23FF` | `0x109A`   |
+| `0x12-0x15`       | `0x0831` | `0x9AF1` | `0x96EC` | `0x45BB` | `0xBDC9` | `0xCFA1`   |
+| `0x16-0x19`       | `0x1019` | `0x1D1B` | `0xFDEB` | `0xAE12` | `0x1F01` | `0x51AE`   |
+| `0x1C-0x1F`       | `0x1120` | `0x678E` | `0x679E` | `0x78EF` | `0xA97F` | `0xB18F`   |
 
 -----
 
@@ -63,11 +69,12 @@ Apparently, BPMs in v4 and v5 format `.ez` files need to be multiplied by a cons
 ("approximately 0.9972299168975069") to be accurate.
 
 Starting with EZ2DJ 7th Trax v1.5, `.ez` files are encoded using various methods.
+(Encoding information is beyond the scope of this document.)
 
 ### Header
 - 0x00-0x03: [char*] "`EZFF`" string (0x45, 0x5A, 0x46, 0x46)
 - 0x04: [byte] presumably the null terminator for the above string
-- 0x05: [byte] Format version number
+- 0x05: [byte] Format version number (see above list)
 - 0x06: [char*] start of internal name (0x40 characters including null terminator)
 - 0x86-0x87: [short] Ticks per measure
 - 0x88-0x8B: [float] Initial BPM/tempo
