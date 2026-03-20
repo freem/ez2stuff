@@ -92,7 +92,7 @@ int main(int argc, char** argv){
 	for(int i = 0; i < filesize; i++){
 #ifdef __ENC
 		uint8_t inByte = fileBuf[i];
-		inByte = inByte + DecodeEZ_7th_2dot0[keyIndex++];
+		inByte = (inByte + DecodeEZ_7th_2dot0[keyIndex++]) & 0xFF;
 #else
 		uint8_t inByte = fgetc(ezFile);
 		fseek(ezFile, -1, SEEK_CUR);
