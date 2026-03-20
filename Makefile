@@ -8,12 +8,13 @@ EZENC_715 = ezenc_715
 EZDEC_720 = ezdec_720
 EZENC_720 = ezenc_720
 EZINS = ezins
+EZABM = ezabm
 
 .PHONY: all clean default
 
 default: all
 
-all: $(EZINFO) $(EZUNFN) $(EZREFN) $(EZDEC_715) $(EZENC_715) $(EZDEC_720) $(EZENC_720) $(EZINS)
+all: $(EZINFO) $(EZUNFN) $(EZREFN) $(EZDEC_715) $(EZENC_715) $(EZDEC_720) $(EZENC_720) $(EZINS) $(EZABM)
 
 $(EZINFO): ezinfo.c
 	$(CC) $(CFLAGS) $^ $(LDFLAGS) -o $@
@@ -39,5 +40,8 @@ $(EZENC_720): ezdec_720.c
 $(EZINS): ezins.c
 	$(CC) $(CFLAGS) $^ $(LDFLAGS) -o $@
 
+$(EZABM): ezabm.c
+	$(CC) $(CFLAGS) $^ $(LDFLAGS) -o $@
+
 clean:
-	rm -f $(EZINFO) $(EZUNFN) $(EZREFN) $(EZDEC_715) $(EZENC_715) $(EZDEC_720) $(EZENC_720) $(EZINS)
+	rm -f $(EZINFO) $(EZUNFN) $(EZREFN) $(EZDEC_715) $(EZENC_715) $(EZDEC_720) $(EZENC_720) $(EZINS) $(EZABM)
