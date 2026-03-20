@@ -20,6 +20,8 @@ enum AbmFormatVersion{
  * "freem, these are clearly shorts, why are you defining them as ints?"
  * The game appears to not bother with the upper two bytes of each value,
  * all of which are stored as 4 byte ints.
+ *
+ * Order is: data start address, width, height, bpp
  */
 const int XorConst_Old[4] = {
 	0x56FE, /* file offsets 0x0A-0x0D */
@@ -103,7 +105,7 @@ typedef struct{
 	uint32_t height;
 	uint16_t numPlanes; /* must be 1 */
 	uint32_t bpp;
-	uint32_t compression;
+	uint16_t compression;
 	uint32_t bitmapDataSize;
 	uint32_t horizRes;
 	uint32_t vertRes;
