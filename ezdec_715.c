@@ -1,10 +1,9 @@
-/* ezdec_715 - encode/decode EZ2DJ 7th Trax v1.5 .ez files */
+/* ezdec_715 - encode/decode EZ2DJ 7th Trax v1.5 files */
 /*============================================================================*/
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
-#include "ezfile.h"
 
 const char DecodeEZ_7th_1dot5[0x200] = {
 	    /*  0x00  0x01  0x02  0x03  0x04  0x05  0x06  0x07  0x08  0x09  0x0A  0x0B  0x0C  0x0D  0x0E  0x0F*/
@@ -44,72 +43,54 @@ const char DecodeEZ_7th_1dot5[0x200] = {
 
 static void Usage(char* execName){
 #ifdef __ENC
-	printf("%s - Encodes .ez files for EZ2DJ 7th Trax v1.5\n", execName);
+	printf("%s - Encodes files for EZ2DJ 7th Trax v1.5\n", execName);
 #else
-	printf("%s - Decodes .ez files from EZ2DJ 7th Trax v1.5\n", execName);
+	printf("%s - Decodes files from EZ2DJ 7th Trax v1.5\n", execName);
 #endif
-	printf("Usage: %s [file.ez]\n", execName);
+	printf("Usage: %s [file]\n", execName);
 }
 
 int main(int argc, char** argv){
-	FILE *ezFile;
+	FILE *inFile;
 	long filesize;
-	char fileHeader[4]; /* first 4 bytes of file */
 
 	if(argc <= 1){
 		Usage(argv[0]);
 		exit(EXIT_FAILURE);
 	}
 
-	ezFile = fopen(argv[1],"r+b");
-	if(ezFile == NULL){
+	inFile = fopen(argv[1],"r+b");
+	if(inFile == NULL){
 		perror("Error opening file");
 		exit(EXIT_FAILURE);
 	}
 
-	if(fgets(fileHeader,5,ezFile) != NULL){
-#ifdef __ENC
-		if(memcmp(fileHeader,Magic_EZFF,4) != 0){
-			printf("%s: This file does not appear to be an EZ2DJ .ez file.\n",argv[0]);
-			fclose(ezFile);
-			exit(EXIT_FAILURE);
-		}
-		/* check if this is a v6 .ez file */
-#else
-		if(memcmp(fileHeader,Magic_EZFF_7th_1dot5,4) != 0){
-			printf("This does not appear to be an EZ2DJ 7th Trax v1.5 encoded .ez file.\n");
-			fclose(ezFile);
-			exit(EXIT_FAILURE);
-		}
-#endif
+	/* get filesize */
+	fseek(inFile, 0, SEEK_END);
+	filesize = ftell(inFile);
+	fseek(inFile, 0, SEEK_SET);
 
-		/* get filesize */
-		fseek(ezFile, 0, SEEK_END);
-		filesize = ftell(ezFile);
-		fseek(ezFile, 0, SEEK_SET);
-
-		/* do that encoding thing */
-		int keyIndex = 0;
-		for(int i = 0; i < filesize; i++){
-			uint8_t inByte = fgetc(ezFile);
-			fseek(ezFile, -1, SEEK_CUR);
+	/* do that encoding thing */
+	int keyIndex = 0;
+	for(int i = 0; i < filesize; i++){
+		uint8_t inByte = fgetc(inFile);
+		fseek(inFile, -1, SEEK_CUR);
 #ifdef __ENC
-			inByte = inByte + DecodeEZ_7th_1dot5[keyIndex++];
+		inByte = inByte + DecodeEZ_7th_1dot5[keyIndex++];
 #else
-			inByte = inByte - DecodeEZ_7th_1dot5[keyIndex++];
+		inByte = inByte - DecodeEZ_7th_1dot5[keyIndex++];
 #endif
-			fputc(inByte,ezFile);
-			if(keyIndex >= 0x200){
-				keyIndex = 0;
-			}
+		fputc(inByte,inFile);
+		if(keyIndex >= 0x200){
+			keyIndex = 0;
 		}
-		fclose(ezFile);
-#ifdef __ENC
-		printf("%s: Successfully encoded %s\n", argv[0],argv[1]);;
-#else
-		printf("%s: Successfully decoded %s\n", argv[0],argv[1]);;
-#endif
 	}
+	fclose(inFile);
+#ifdef __ENC
+	printf("%s: Successfully encoded %s\n", argv[0],argv[1]);;
+#else
+	printf("%s: Successfully decoded %s\n", argv[0],argv[1]);;
+#endif
 
 	return EXIT_SUCCESS;
 }

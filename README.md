@@ -37,14 +37,13 @@ Displays:
 Converting between `.ezi` versions is not yet available, but is planned.
 
 ## `ezdec_715`, `ezenc_715`
-Utilities related to encoding and decoding EZ2DJ 7th Trax v1.5 `.ez` files.
+Utilities related to encoding and decoding EZ2DJ 7th Trax v1.5 files.
 
-`ezdec_715` decodes files, and `ezenc_715` encodes them. The latter program
-should only be used with file format v6 `.ez` files.
+`ezdec_715` decodes files, and `ezenc_715` encodes them.
 
 Usage:
-- `ezdec_715 [file.ez]` to decode
-- `ezenc_715 [file.ez]` to encode
+- `ezdec_715 [file]` to decode
+- `ezenc_715 [file]` to encode
 
 These tools *overwrite* the input file with the modified version, so be careful.
 
