@@ -36,6 +36,25 @@ Displays:
 
 Converting between `.ezi` versions is not yet available, but is planned.
 
+## `ezabm`
+Utility related to `.abm` and `.bmp` files.
+
+`--tobmp` functionality is not fully implemented. This will be fixed.
+
+Usage:
+- `ezabm --info filename.abm` to get information about an `.abm` file.
+- `ezabm --tobmp version filename.abm [outfile.bmp]` to convert `.abm` to `.bmp`
+- `ezabm --toabm version filename.bmp [outfile.abm]` to convert `.bmp` to `.abm`
+
+For `--tobmp` and `--toabm`, `version` is one of the following:
+- `old` &ndash; 2nd Trax through Endless Circulation
+- `ev` &ndash; Evolve
+- `nt` &ndash; Night Traveler
+- `tt` &ndash; Time Traveler
+- `fn` &ndash; Final
+- `fnex` &ndash; Final EX
+- `auto` &ndash; attempt to auto-detect format (`--tobmp` only)
+
 ## `ezdec_715`, `ezenc_715`
 Utilities related to encoding and decoding EZ2DJ 7th Trax v1.5 files.
 
