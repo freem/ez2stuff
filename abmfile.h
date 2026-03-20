@@ -95,8 +95,8 @@ const char DIB_HEADER[2] = { 0x42,0x4D }; /* "BM" */
 
 typedef struct{
 	uint32_t filesize;
-	uint16_t offset06; /* "actual value depends on the application that creates the image" */
-	uint16_t offset08; /* (see offset06 comment) */
+	uint16_t offset_06; /* "actual value depends on the application that creates the image" */
+	uint16_t offset_08; /* (see offset06 comment) */
 	uint32_t dataStartAddr;
 	uint32_t infoHeaderSize;
 	uint32_t width;
