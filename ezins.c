@@ -71,9 +71,11 @@ int main(int argc, char** argv){
 		char *noteName = calloc(4,1);
 		while(feof(eziFile) == 0){
 			fgets(lineBuf,sizeof(lineBuf),eziFile);
-			/* don't process anything if we hit EOF */
 			if(feof(eziFile)){
-				break;
+				/* don't process blank lines if we hit EOF */
+				if(lineBuf[0] == '\r' || lineBuf[0] == '\n'){
+					break;
+				}
 			}
 
 			if(fileVer == 1){
