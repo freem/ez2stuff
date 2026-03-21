@@ -55,6 +55,20 @@ For `--tobmp` and `--toabm`, `version` is one of the following:
 - `fnex` &ndash; Final EX
 - `auto` &ndash; attempt to auto-detect format (`--tobmp` only)
 
+If the output filename is omitted while using one of the conversion options,
+the program will generate a filename based on the input filename.
+
+## `ezwssf`
+Utility related to `.ezw`/`.ssf` and `.wav` files.
+
+Usage:
+- `ezwssf --info filename.ezw` to get information about an `.ezw` or `.ssf` file.
+- `ezwssf --towav filename.ezw [outfile.wav]` to convert `.ezw`/`.ssf` to `.wav`
+- `ezwssf --toezw filename.wav [outfile.ezw]` to convert `.wav` to `.ezw`/`.ssf`
+
+If the output filename is omitted while using one of the conversion options,
+the program will generate a filename based on the input filename.
+
 ## `ezdec_715`, `ezenc_715`
 Utilities related to encoding and decoding EZ2DJ 7th Trax v1.5 files.
 
