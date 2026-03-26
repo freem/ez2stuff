@@ -271,7 +271,7 @@ int main(int argc, char** argv){
 			/* now is the time, do it */
 			bmpHeader.offset_06 = 0;
 			bmpHeader.offset_08 = 0;
-			bmpHeader.dataStartAddr = GetXorValue(abmHeader.infoHeaderSize,formatVersion,0);
+			bmpHeader.dataStartAddr = GetXorValue(abmHeader.dataStartAddr,formatVersion,0);
 			bmpHeader.infoHeaderSize = abmHeader.infoHeaderSize;
 			bmpHeader.width = GetXorValue(abmHeader.width2,formatVersion,1);
 			bmpHeader.height = GetXorValue(abmHeader.height2,formatVersion,2);
@@ -314,8 +314,41 @@ int main(int argc, char** argv){
 				bmpHeader.filesize = abmHeader.bpp;
 			}
 			else{
-				/* todo: determine total output file size */
+				/* determine filesize later */
+				bmpHeader.filesize = 0;
 			}
+			fwrite(&bmpHeader.filesize,sizeof(uint32_t),1,outFile);
+			fwrite(&bmpHeader.offset_06,sizeof(uint16_t),1,outFile);
+			fwrite(&bmpHeader.offset_08,sizeof(uint16_t),1,outFile);
+			fwrite(&bmpHeader.dataStartAddr,sizeof(uint32_t),1,outFile);
+			fwrite(&bmpHeader.infoHeaderSize,sizeof(uint32_t),1,outFile);
+			fwrite(&bmpHeader.width,sizeof(uint32_t),1,outFile);
+			fwrite(&bmpHeader.height,sizeof(uint32_t),1,outFile);
+			fwrite(&bmpHeader.numPlanes,sizeof(uint16_t),1,outFile);
+			fwrite(&bmpHeader.bpp,sizeof(uint32_t),1,outFile);
+			fwrite(&bmpHeader.compression,sizeof(uint16_t),1,outFile);
+			fwrite(&bmpHeader.bitmapDataSize,sizeof(uint32_t),1,outFile);
+			fwrite(&bmpHeader.horizRes,sizeof(uint32_t),1,outFile);
+			fwrite(&bmpHeader.vertRes,sizeof(uint32_t),1,outFile);
+			fwrite(&bmpHeader.numPalColors,sizeof(uint32_t),1,outFile);
+			fwrite(&bmpHeader.numImportantColors,sizeof(uint32_t),1,outFile);
+
+			uint8_t *pixels = calloc(bmpHeader.bitmapDataSize,sizeof(uint8_t));
+			if(pixels == NULL){
+				printf("%s --tobmp error: Unable to allocate memory for pixel data\n",argv[0]);
+				exit(EXIT_FAILURE);
+			}
+			fread(pixels,sizeof(uint8_t),bmpHeader.bitmapDataSize,inFile);
+			fwrite(pixels,sizeof(uint8_t),bmpHeader.bitmapDataSize,outFile);
+
+			if(bmpHeader.filesize == 0){
+				long int endPos = ftell(outFile);
+				fseek(outFile,2,SEEK_SET);
+				fwrite(&endPos,sizeof(uint32_t),1,outFile);
+			}
+
+			fclose(inFile);
+			free(pixels);
 
 			fclose(outFile);
 			printf("%s: Wrote output to %s\n",argv[0],outFilename);

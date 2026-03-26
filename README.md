@@ -39,8 +39,6 @@ Converting between `.ezi` versions is not yet available, but is planned.
 ## `ezabm`
 Utility related to `.abm` and `.bmp` files.
 
-`--tobmp` functionality is not fully implemented. This will be fixed.
-
 Usage:
 - `ezabm --info filename.abm` to get information about an `.abm` file.
 - `ezabm --tobmp version filename.abm [outfile.bmp]` to convert `.abm` to `.bmp`
