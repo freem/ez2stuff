@@ -315,7 +315,7 @@ int main(int argc, char** argv){
 			}
 			else{
 				/* determine filesize later */
-				bmpHeader.filesize = 0;
+				bmpHeader.filesize = bmpHeader.bitmapDataSize+bmpHeader.infoHeaderSize;
 			}
 			fwrite(&bmpHeader.filesize,sizeof(uint32_t),1,outFile);
 			fwrite(&bmpHeader.offset_06,sizeof(uint16_t),1,outFile);
@@ -333,6 +333,16 @@ int main(int argc, char** argv){
 			fwrite(&bmpHeader.numPalColors,sizeof(uint32_t),1,outFile);
 			fwrite(&bmpHeader.numImportantColors,sizeof(uint32_t),1,outFile);
 
+			if(abmHeader.bitmapDataSize == 0){
+				/* need to calculate real bitmapDataSize */
+				fseek(inFile,0,SEEK_END);
+				long int endPos = ftell(inFile);
+				bmpHeader.bitmapDataSize = endPos+0x36;
+			}
+
+			fseek(inFile,bmpHeader.dataStartAddr,SEEK_SET);
+			fseek(outFile,bmpHeader.dataStartAddr,SEEK_SET);
+
 			uint8_t *pixels = calloc(bmpHeader.bitmapDataSize,sizeof(uint8_t));
 			if(pixels == NULL){
 				printf("%s --tobmp error: Unable to allocate memory for pixel data\n",argv[0]);
@@ -342,6 +352,7 @@ int main(int argc, char** argv){
 			fwrite(pixels,sizeof(uint8_t),bmpHeader.bitmapDataSize,outFile);
 
 			if(bmpHeader.filesize == 0){
+				fseek(outFile,0,SEEK_END);
 				long int endPos = ftell(outFile);
 				fseek(outFile,2,SEEK_SET);
 				fwrite(&endPos,sizeof(uint32_t),1,outFile);
