@@ -169,6 +169,30 @@ The note is now a numerical index. Otherwise, the format is the same.
 
 -----
 
+## Per-chart `.ini`
+
+### `[General]`
+- `Level` &ndash; Chart difficulty level.
+- `MeasureScale`
+
+### `[JudgmentDelta]`
+- `Kool`
+- `Cool`
+- `Good`
+- `Miss`
+
+### `[GaugeUpDownRate]`
+- `Cool`
+- `Good`
+- `Miss`
+- `Fail`
+
+### `[SongOriginalName]`
+- `Name`
+- `Version`
+
+-----
+
 ## `.ets` &ndash; EZSEQ Track Set
 This format defines the available lanes/tracks that can be used in EZSEQ.
 
@@ -509,8 +533,8 @@ Track numbering starts at 1.
 - `PressKeyDownTexture` &ndash; filename of pressed key texture.
 - `PressKeyColor` &ndash; pressed key texture colors (r,g,b,a; all ints)
 - `PressKeyAlphaFunc` &ndash; pressed key texture alpha function (int,int)
-- `PressBarColor`
-- `PressBarTexture`
+- `PressBarColor` &ndash; pressed bar colors (r,g,b,a; all ints)
+- `PressBarTexture` &ndash; filename of pressed bar texture.
 - `PressBarMaxHeight`
 - `PressBarGrowUpSpeed`
 - `PressBarShrinkSpeed`
@@ -532,95 +556,95 @@ RightBoader = {
 ```
 
 ### `[MeasureLine]`
-- `Enable`
-- `Left`
-- `Size`
-- `MaxFrame`
-- `AniTexture`
+- `Enable` &ndash; 0=disabled, 1=enabled
+- `Left` &ndash; Leftmost x position.
+- `Size` &ndash; width,height size.
+- `MaxFrame` &ndash; maximum frame number. (Numbering starts at 0, so filenames will have 0 to MaxFrame-1)
+- `AniTexture` &ndash; measure line texture path and prefix.
 
 ### `[CoolBomb]`, `[GoodBomb]`, `[LongNoteBomb]`
 These define the note explosions for various judgments.
 
-- `Enable`
+- `Enable` &ndash; 0=disabled, 1=enabled
 - `HeightHotSpot`
-- `Size`
-- `FrameDelay`
-- `MaxFrame`
+- `Size` &ndash; width,height size.
+- `FrameDelay` &ndash; number of frames to delay
+- `MaxFrame` &ndash; maximum frame number. (Numbering starts at 0, so filenames will have 0 to MaxFrame-1)
 - `AniTexture`
 
 ### `[Judgment]`
 Standard judgments.
 
-- `Enable`
+- `Enable` &ndash; 0=disabled, 1=enabled
 - `HotSpot`
-- `KoolStr`
-- `CoolStr`
-- `GoolStr`
-- `MissStr`
-- `FailStr`
+- `KoolStr` &ndash; filename of Kool animation.
+- `CoolStr` &ndash; filename of Cool animation.
+- `GoolStr` &ndash; filename of Good animation. (It really *does* say "Gool", I'm not trying to be funny.)
+- `MissStr` &ndash; filename of Miss animation.
+- `FailStr` &ndash; filename of Fail animation.
 
 ### `[JudgmentTex]`
 This is the version with fast/slow indicators.
 
-- `Enable`
-- `KoolTex`
-- `FastCoolTex`
-- `SlowCoolTex`
-- `GoodTex`
-- `MissTex`
-- `FailTex`
+- `Enable` &ndash; 0=disabled, 1=enabled
+- `KoolTex` &ndash; texture filename for Kool.
+- `FastCoolTex` &ndash; texture filename for fast Cool.
+- `SlowCoolTex` &ndash; texture filename for slow Cool.
+- `GoodTex` &ndash; texture filename for Good.
+- `MissTex` &ndash; texture filename for Miss.
+- `FailTex` &ndash; texture filename for Fail.
 
 ### `[CoolCombo]`
 Defines the main combo display.
 
-- `Enable`
-- `Font`
+- `Enable` &ndash; 0=disabled, 1=enabled
+- `Font` &ndash; combo font texture path and prefix.
 - `HotSpot`
-- `Unit1Str`
-- `Unit2Str`
-- `Unit3Str`
-- `Unit4Str`
+- `Unit1Str` &ndash; filename of 1-digit combo animation.
+- `Unit2Str` &ndash; filename of 2-digit combo animation.
+- `Unit3Str` &ndash; filename of 3-digit combo animation.
+- `Unit4Str` &ndash; filename of 4-digit combo animation.
 
 ### `[KeyPanel]`
-- `Enable`
-- `Coord`
-- `Size`
-- `Bitmap`
+- `Enable` &ndash; 0=disabled, 1=enabled
+- `Coord` &ndash; x,y coordinates.
+- `Size` &ndash; width,height size.
+- `Bitmap` &ndash; path to panel texture.
 
 ### `[MaxCoolCombo]`
 Defines the Max Combo display.
 
-- `Enable`
-- `Coord`
-- `FontTexture`
+- `Enable` &ndash; 0=disabled, 1=enabled
+- `Coord` &ndash; x,y coordinates.
+- `FontTexture` &ndash; font texture path and prefix.
 - `FontSize`
 - `FontPitch`
-- `Format`
-- `AlphaFunc`
+- `Format` &ndash; `printf` format string
+- `AlphaFunc` &ndash; (int,int)
 
 ### `[Score]`
 Defines the Score display.
 
-- `Enable`
-- `Coord`
-- `FontTexture`
+- `Enable` &ndash; 0=disabled, 1=enabled
+- `Coord` &ndash; x,y coordinates.
+- `FontTexture` &ndash; font texture path and prefix.
 - `FontSize`
 - `FontPitch`
-- `Format`
-- `AlphaFunc`
+- `Format` &ndash; `printf` format string
+- `AlphaFunc` &ndash; (int,int)
 
 ### `[GrooveGauge]`
-- `Enable`
-- `BackCoord`
+- `Enable` &ndash; 0=disabled, 1=enabled
+- `BackCoord` &ndash; gauge background x,y coordinates.
 - `BackBitmap`
-- `GaugeCoord`
+- `GaugeCoord` &ndash; gauge foreground x,y coordinates.
 - `GaugeBitmap`
 
 ### `[AudienceRating]`
 Used for current Audience Rating when using the Listening Rate gauge.
 
-- `Enable` &ndash; 0/1
-- `Coord` &ndash; x,y position
+- `Enable` &ndash; 0=disabled, 1=enabled
+- `Coord` &ndash; x,y coordinates.
 - `Font` &ndash; font filename prefix
 - `FontSize` &ndash; font character size width,height
 - `Format` &ndash; `printf` format string
@@ -629,17 +653,17 @@ Used for current Audience Rating when using the Listening Rate gauge.
 ### `[GoalAudienceRating]`
 Used for goal Audience Rating when using the Listening Rate gauge.
 
-- `Enable` &ndash; 0/1
-- `Coord` &ndash; x,y position
+- `Enable` &ndash; 0=disabled, 1=enabled
+- `Coord` &ndash; x,y coordinates.
 - `Font` &ndash; font filename prefix
 - `FontSize` &ndash; font character size width,height
 - `Format` &ndash; `printf` format string
 - `AlphaFunc` &ndash; (int,int)
 
 ### `[GrooveLight]`
-- `Enable`
-- `Coord`
-- `Size`
+- `Enable` &ndash; 0=disabled, 1=enabled
+- `Coord` &ndash; x,y coordinates.
+- `Size` &ndash; width,height size.
 - `BackTexture`
 - `FrontCoord`
 - `FrontSize`
@@ -648,12 +672,12 @@ Used for goal Audience Rating when using the Listening Rate gauge.
 ### `[TargetBar]`
 Defines the target line/receptors.
 
-- `Enable`
+- `Enable` &ndash; 0=disabled, 1=enabled
 
-Then, for each possible NoteAniTexture:
+Then, for each possible `NoteAniTexture`:
 
-- `Coord`
-- `Size`
+- `Coord` &ndash; x,y coordinates.
+- `Size` &ndash; width,height size.
 - `AniTexture`
 
 ### `[SpecialNote]`
@@ -662,30 +686,30 @@ Then, for each possible NoteAniTexture:
 ### `[RubyGauge]`
 Defines the Ruby Mix life gauge.
 
-- `Enable`
+- `Enable` &ndash; 0=disabled, 1=enabled
 - `HotSpot`
 - `BackStr`
-- `Coord`
+- `Coord` &ndash; x,y coordinates.
 - `ItemSize`
 - `MaxItem`
 - `MaxFrame`
-- `ItemAniTexture1
+- `ItemAniTexture`
 
 ### `[RubyKeyPanel]`
-- `Enable`
-- `Coord`
-- `Size`
+- `Enable` &ndash; 0=disabled, 1=enabled
+- `Coord` &ndash; x,y coordinates.
+- `Size` &ndash; width,height size.
 - `Bitmap`
 - `FailStr`
 
 ### `[ComboEffect]`
-- `Enable`
+- `Enable` &ndash; 0=disabled, 1=enabled
 - `Str1`
 - `Str2`
 - `Str3`
 
 ### `[PuzzleNote] `
-- `Enable`
+- `Enable` &ndash; 0=disabled, 1=enabled
 - `FadeOutAniTexture`
 - `FadeInAniTexture`
 - `BlinkAniTexture`
@@ -700,14 +724,14 @@ Defines the Ruby Mix life gauge.
 - `GaugeUpAniTexture`
 
 ### `[ComboGauge]`
-- `Enable`
+- `Enable` &ndash; 0=disabled, 1=enabled
 - `BackCoord`
 - `BackBitmap`
 - `GaugeCoord`
 - `GaugeBitmap`
 
 ### `[SongSelectPane]`
-- `Enable`
+- `Enable` &ndash; 0=disabled, 1=enabled
 - `LeftCoord`
 - `RightCoord`
 - `Texture`
