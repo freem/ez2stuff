@@ -51,7 +51,7 @@ It is not currently known if paletted or compressed images exist.
 | `0x0A-0x0D`       | `0x56FE` | `0x45AE` | `0x85BE` | `0x95AB` | `0x23FF` | `0x109A`   |
 | `0x12-0x15`       | `0x0831` | `0x9AF1` | `0x96EC` | `0x45BB` | `0xBDC9` | `0xCFA1`   |
 | `0x16-0x19`       | `0x1019` | `0x1D1B` | `0xFDEB` | `0xAE12` | `0x1F01` | `0x51AE`   |
-| `0x1C-0x1F`       | `0x1120` | `0x678E` | `0x679E` | `0x78EF` | `0xA97F` | `0xB18F`   |
+| `0x1C-0x1F`       | `0x1120` | `0x67BE` | `0x67AE` | `0x78EF` | `0xA97F` | `0xB18F`   |
 
 -----
 
@@ -223,7 +223,8 @@ Track numbering starts at 0.
 -----
 
 ## `.ezv` &ndash; "Ez2Video"
-Text-based format that defines background animations. Meant to be opened by EZ2Visual.
+Text-based format that defines background animations. Can be opened by EZ2Visual
+and Tokeiburu's [StrEditor](https://rathena.org/board/topic/130296-a-more-friendly-str-editor/).
 
 EZ2Visual appears to recognize the following formats:
 - `EVFF0.91`
@@ -382,7 +383,7 @@ The `'` character is used to start a comment.
 
 ### `[General]`
 - `NumberOfSlot` &ndash; (int) Defines the total number of slots.
-- `UseChainPlay` &ndash; (int) ?
+- `UseChainPlay` &ndash; (int) "Nonstop mixing" mode. Only set to 1 for Club and Space Mix in older games.
 - `MaxBaseStage` &ndash; (int) Maximum number of regular stages.
 - `MaxBonusStage` &ndash; (int) Maximum number of bonus stages.
 
@@ -407,7 +408,7 @@ Track1=
 For `SongTrack` values, see "Songtrack Values" in the `.ets` section.
 
 #### Key
-`Key` can have two values. If the second value is `-1`, there is no secondary input action.
+`Key` has two values. If the second value is `-1`, there is no secondary input action.
 
 Known values:
 - 6 &ndash; Effector 1
@@ -431,11 +432,28 @@ Known values:
 - 24 &ndash; 2P Scratch 2
 - 25 &ndash; 2P Pedal
 
+Values 0-5 are currently unknown.
+
+Inputs that are not accounted for in the above list:
+- 1P Start
+- 2P Start
+- Test Mode button
+- Service credit button
+
 ### `[Gauge]`
-- `Type` &ndash; (int)
+This section appears to be optional, as a few `.gds` files lack it.
+Presumably, if this section is missing, `Type` falls back to 0.
+
+- `Type` &ndash; (int) Defines gauge type.
+
+Known values:
+- 0 &ndash; Standard Groove gauge
+- 1 &ndash; Listening Rate gauge
 
 ### `[ShowCredit]`
-- `Coord1`, `Coord2`
+- `Coord1`, `Coord2` &ndash; X,Y coordinates for credits display(s).
+
+If the X coordinate is -1, the corresponding credits display is disabled.
 
 ### `[JudgmentLink]`
 - `Slot#`
@@ -473,24 +491,24 @@ Slot1 =
 -----
 
 ## `.pvi` &ndash; Panel Visuals
-INI-style format used to describe game panel visuals.
+INI-style format used to describe game panel visuals (and a few other things).
 
 ### `[General]`
-- `NumberOfTrack` &ndash; [int] Number of playable tracks.
+- `NumberOfTrack` &ndash; [int] Number of track definitions.
 
 ### `[Track#]`
 Track numbering starts at 1.
 
-- `Enable`
-- `Coord`
-- `Size`
-- `BKAlphaFunc`
-- `BkColor1`, `BkColor2`
-- `LeftBoader`, `RightBoader` (sic)
-- `PressKeyCoord`
-- `PressKeyDownTexture`
-- `PressKeyColor`
-- `PressKeyAlphaFunc`
+- `Enable` &ndash; 0=track disabled, 1=track enabled
+- `Coord` &ndash; x,y coordinates.
+- `Size` &ndash; width,height size.
+- `BKAlphaFunc` &ndash; background alpha function (int,int)
+- `BkColor1`, `BkColor2` &ndash; background colors (r,g,b,a; all ints)
+- `LeftBoader`, `RightBoader` (sic) &ndash; define the borders of this track.
+- `PressKeyCoord` &ndash; x,y position of pressed key texture.
+- `PressKeyDownTexture` &ndash; filename of pressed key texture.
+- `PressKeyColor` &ndash; pressed key texture colors (r,g,b,a; all ints)
+- `PressKeyAlphaFunc` &ndash; pressed key texture alpha function (int,int)
 - `PressBarColor`
 - `PressBarTexture`
 - `PressBarMaxHeight`
@@ -499,6 +517,9 @@ Track numbering starts at 1.
 - `NoteAniTexture`
 
 #### Border example data
+This example creates a 2-pixel border with hex color `#141414` on the left side of the track.
+The right side has no border.
+
 ```
 LeftBoader = {
     LineWidth = 2
@@ -518,6 +539,8 @@ RightBoader = {
 - `AniTexture`
 
 ### `[CoolBomb]`, `[GoodBomb]`, `[LongNoteBomb]`
+These define the note explosions for various judgments.
+
 - `Enable`
 - `HeightHotSpot`
 - `Size`
@@ -526,6 +549,8 @@ RightBoader = {
 - `AniTexture`
 
 ### `[Judgment]`
+Standard judgments.
+
 - `Enable`
 - `HotSpot`
 - `KoolStr`
@@ -536,6 +561,7 @@ RightBoader = {
 
 ### `[JudgmentTex]`
 This is the version with fast/slow indicators.
+
 - `Enable`
 - `KoolTex`
 - `FastCoolTex`
@@ -545,6 +571,8 @@ This is the version with fast/slow indicators.
 - `FailTex`
 
 ### `[CoolCombo]`
+Defines the main combo display.
+
 - `Enable`
 - `Font`
 - `HotSpot`
@@ -560,6 +588,8 @@ This is the version with fast/slow indicators.
 - `Bitmap`
 
 ### `[MaxCoolCombo]`
+Defines the Max Combo display.
+
 - `Enable`
 - `Coord`
 - `FontTexture`
@@ -569,6 +599,8 @@ This is the version with fast/slow indicators.
 - `AlphaFunc`
 
 ### `[Score]`
+Defines the Score display.
+
 - `Enable`
 - `Coord`
 - `FontTexture`
@@ -583,6 +615,26 @@ This is the version with fast/slow indicators.
 - `BackBitmap`
 - `GaugeCoord`
 - `GaugeBitmap`
+
+### `[AudienceRating]`
+Used for current Audience Rating when using the Listening Rate gauge.
+
+- `Enable` &ndash; 0/1
+- `Coord` &ndash; x,y position
+- `Font` &ndash; font filename prefix
+- `FontSize` &ndash; font character size width,height
+- `Format` &ndash; `printf` format string
+- `AlphaFunc` &ndash; (int,int)
+
+### `[GoalAudienceRating]`
+Used for goal Audience Rating when using the Listening Rate gauge.
+
+- `Enable` &ndash; 0/1
+- `Coord` &ndash; x,y position
+- `Font` &ndash; font filename prefix
+- `FontSize` &ndash; font character size width,height
+- `Format` &ndash; `printf` format string
+- `AlphaFunc` &ndash; (int,int)
 
 ### `[GrooveLight]`
 - `Enable`
@@ -604,7 +656,66 @@ Then, for each possible NoteAniTexture:
 - `Size`
 - `AniTexture`
 
+### `[SpecialNote]`
+- `NoteAniTexture`
+
+### `[RubyGauge]`
+Defines the Ruby Mix life gauge.
+
+- `Enable`
+- `HotSpot`
+- `BackStr`
+- `Coord`
+- `ItemSize`
+- `MaxItem`
+- `MaxFrame`
+- `ItemAniTexture1
+
+### `[RubyKeyPanel]`
+- `Enable`
+- `Coord`
+- `Size`
+- `Bitmap`
+- `FailStr`
+
+### `[ComboEffect]`
+- `Enable`
+- `Str1`
+- `Str2`
+- `Str3`
+
+### `[PuzzleNote] `
+- `Enable`
+- `FadeOutAniTexture`
+- `FadeInAniTexture`
+- `BlinkAniTexture`
+- `RandomAniTexture`
+- `SuperRandomAniTexture`
+- `ManiacRandomAniTexture`
+- `4DAniTexture`
+- `5DAniTexture`
+- `BombAniTexture`
+- `0_5XAniTexture`
+- `2XAniTexture`
+- `GaugeUpAniTexture`
+
+### `[ComboGauge]`
+- `Enable`
+- `BackCoord`
+- `BackBitmap`
+- `GaugeCoord`
+- `GaugeBitmap`
+
+### `[SongSelectPane]`
+- `Enable`
+- `LeftCoord`
+- `RightCoord`
+- `Texture`
+- `FinalTexture`
+
 (todo)
+
+FastSlowTex, GroupTexture
 
 -----
 
@@ -635,7 +746,7 @@ There are multiple `.scr` formats:
 
 ### Header (newer version)
 - 0x00-0x03: [char*] "`SCR0`" string (0x53, 0x43, 0x52, 0x30)
-- 0x04-0x07: [int] ?
+- 0x04-0x07: [int] format version number?
 - 0x08-0x0B: [int] ?
 - 0x0C-0x0F: [int] ?
 - 0x10-0x13: [int] ?
@@ -656,4 +767,19 @@ This format is exported by Ez2Visual when using one of the "Play" options in the
 - 0x0C-0x0F: [int] Maximum key value (`maxkey`)
 - 0x10-0x13: [int] Number of layers (`layernum`)
 
+if Number of layers is nonzero, that many ints will follow?
+
 (other parts todo)
+
+Number of textures (`texcnt`), followed by filenames (each filename's length is 0x80)
+
+-----
+
+## `.tgrp` &ndash; Texture Group
+Found in EZ2DJ 2nd Trax. Possibly the successor to the `summary.bin` file found
+in the Panel folders of 1st Trax and 1st Trax SE.
+
+### Header
+- 0x00-0x03: [char*] "`TXG0`" string (0x54, 0x58, 0x47, 0x30)
+
+(todo)
