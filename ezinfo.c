@@ -6,6 +6,31 @@
 #include <string.h>
 #include "ezfile.h"
 
+static char* TrackSlot[] = {
+	"Control",
+	"BG L",
+	"BG R",
+	"1P Key1",
+	"1P Key2",
+	"1P Key3",
+	"1P Key4",
+	"1P Key5",
+	"Effector1",
+	"Effector2",
+	"1P Scratch",
+	"1P Pedal",
+	"Effector3",
+	"Effector4",
+	"2P Key1",
+	"2P Key2",
+	"2P Key3",
+	"2P Key4",
+	"2P Key5",
+	"2P Scratch",
+	"2P Pedal",
+	"Lights",
+};
+
 static void Usage(char* execName){
 	printf("%s - Prints information about .ez files\n", execName);
 	printf("Usage: %s [file.ez]\n", execName);
@@ -164,7 +189,12 @@ int main(int argc, char** argv){
 	for(int i = 0; i < headerData.numTracks; i++){
 		int numNotes = tracks[i].dataSize/noteBytes;
 		printf("--------------------\n");
-		printf("Track %d\n",i);
+		if(i < 22){
+			printf("Track %d [%s]\n",i,TrackSlot[i]);
+		}
+		else{
+			printf("Track %d [BGM]\n",i);
+		}
 		printf("name: %s\n",tracks[i].name);
 		printf("numTicks: %u (0x%08X)\n",tracks[i].numTicks,tracks[i].numTicks);
 		printf("dataSize: %u (0x%08X)\n",tracks[i].dataSize,tracks[i].dataSize);
