@@ -172,20 +172,20 @@ The note is now a numerical index. Otherwise, the format is the same.
 ## Per-chart `.ini`
 
 ### `[General]`
-- `Level` &ndash; Chart difficulty level.
-- `MeasureScale`
+- `Level` &ndash; [int] Chart difficulty level.
+- `MeasureScale` &ndash; [float]
 
 ### `[JudgmentDelta]`
-- `Kool`
-- `Cool`
-- `Good`
-- `Miss`
+- `Kool` &ndash; [int?]
+- `Cool` &ndash; [int?]
+- `Good` &ndash; [int?]
+- `Miss` &ndash; [int?]
 
 ### `[GaugeUpDownRate]`
-- `Cool`
-- `Good`
-- `Miss`
-- `Fail`
+- `Cool` &ndash; [float]
+- `Good` &ndash; [float]
+- `Miss` &ndash; [float]
+- `Fail` &ndash; [float]
 
 ### `[SongOriginalName]`
 - `Name`
@@ -406,13 +406,13 @@ INI-style format used to describe game modes.
 The `'` character is used to start a comment.
 
 ### `[General]`
-- `NumberOfSlot` &ndash; (int) Defines the total number of slots.
-- `UseChainPlay` &ndash; (int) "Nonstop mixing" mode. Only set to 1 for Club and Space Mix in older games.
-- `MaxBaseStage` &ndash; (int) Maximum number of regular stages.
-- `MaxBonusStage` &ndash; (int) Maximum number of bonus stages.
+- `NumberOfSlot` &ndash; [int] Defines the total number of slots.
+- `UseChainPlay` &ndash; [int] "Nonstop mixing" mode. Only set to 1 for Club and Space Mix in older games.
+- `MaxBaseStage` &ndash; [int] Maximum number of regular stages.
+- `MaxBonusStage` &ndash; [int] Maximum number of bonus stages.
 
 ### `[Background]`
-- `UseForceBackground` &ndash; (int) ?
+- `UseForceBackground` &ndash; [int] ?
 
 ### `[Slot#]`
 Slot numbering starts at 1.
@@ -468,7 +468,7 @@ Inputs that are not accounted for in the above list:
 This section appears to be optional, as a few `.gds` files lack it.
 Presumably, if this section is missing, `Type` falls back to 0.
 
-- `Type` &ndash; (int) Defines gauge type.
+- `Type` &ndash; [int] Defines gauge type.
 
 Known values:
 - 0 &ndash; Standard Groove gauge
@@ -617,7 +617,7 @@ Defines the Max Combo display.
 - `Enable` &ndash; 0=disabled, 1=enabled
 - `Coord` &ndash; x,y coordinates.
 - `FontTexture` &ndash; font texture path and prefix.
-- `FontSize`
+- `FontSize` &ndash; font character size width,height
 - `FontPitch`
 - `Format` &ndash; `printf` format string
 - `AlphaFunc` &ndash; (int,int)
@@ -628,7 +628,7 @@ Defines the Score display.
 - `Enable` &ndash; 0=disabled, 1=enabled
 - `Coord` &ndash; x,y coordinates.
 - `FontTexture` &ndash; font texture path and prefix.
-- `FontSize`
+- `FontSize` &ndash; font character size width,height
 - `FontPitch`
 - `Format` &ndash; `printf` format string
 - `AlphaFunc` &ndash; (int,int)
