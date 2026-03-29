@@ -40,7 +40,7 @@ int main(int argc, char** argv){
 	FILE *ezFile;
 	long filesize;
 	char fileHeader[4]; /* first 4 bytes of file */
-	Header headerData;
+	EzHeader headerData;
 	int noteBytes;
 
 	if(argc <= 1){

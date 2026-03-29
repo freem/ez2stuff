@@ -35,7 +35,7 @@ typedef struct{
 		float f;
 		uint32_t u;
 	} secondBPM;
-} Header;
+} EzHeader;
 
 /*----------------------------------------------------------------------------*/
 enum NoteType {
