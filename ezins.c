@@ -70,16 +70,20 @@ int main(int argc, char** argv){
 
 		char *noteName = calloc(4,1);
 		while(feof(eziFile) == 0){
+			memset(lineBuf,0,sizeof(lineBuf));
 			fgets(lineBuf,sizeof(lineBuf),eziFile);
+
+			/* some .ezi files do not include a newline at the end.
+			 * we need to be able to handle these files properly.
+			 */
 			if(feof(eziFile)){
-				/* don't process blank lines if we hit EOF */
-				if(lineBuf[0] == '\r' || lineBuf[0] == '\n'){
+				if(!isalnum((int)lineBuf[0])){
 					break;
 				}
 			}
 
 			if(fileVer == 1){
-				/* keysound_index type filename */
+				// keysound_index type filename
 				sscanf(lineBuf,"%hi %d %s",&ins.index,&ins.type,ins.filename);
 				if(ins.index < 256){
 					printf("%hi (== %s%d) %d %s",ins.index,OldNoteNames[KeysoundIndexToNote(ins.index)],KeysoundIndexToOctave(ins.index),ins.type,ins.filename);
@@ -90,7 +94,7 @@ int main(int argc, char** argv){
 				numInstruments++;
 			}
 			else{
-				/* key_name type filename */
+				// key_name type filename
 				sscanf(lineBuf,"%s %d %s",oldNoteStr,&ins.type,ins.filename);
 
 				int p = strcspn(oldNoteStr,OctaveNums);
@@ -133,25 +137,20 @@ int main(int argc, char** argv){
 
 		/* check number of defined instruments */
 		fseek(eziFile,0,SEEK_SET);
-		char *newLine;
 		while(feof(eziFile) == 0){
+			memset(lineBuf,0,sizeof(lineBuf));
 			fgets(lineBuf,sizeof(lineBuf),eziFile);
+
 			if(feof(eziFile)){
-				break;
+				if(!isalnum((int)lineBuf[0])){
+					break;
+				}
 			}
 
-			newLine = strchr(lineBuf,'\n');
-			if(newLine != NULL){
-				if(newLine-lineBuf > 1){
-					numInstruments++;
-				}
-			}
-			else{
-				if(feof(eziFile)){
-					numInstruments++;
-				}
-			}
+			sscanf(lineBuf,"%hi %d %s",&ins.index,&ins.type,ins.filename);
+			numInstruments++;
 		}
+
 		if(numInstruments > 256){
 			printf("Error: Too many instruments defined for old format; found %d (maximum 256)\n",numInstruments);
 			exit(EXIT_FAILURE);
@@ -166,9 +165,12 @@ int main(int argc, char** argv){
 
 		int curInstrument = 0;
 		while(feof(eziFile) == 0){
+			memset(lineBuf,0,sizeof(lineBuf));
 			fgets(lineBuf,sizeof(lineBuf),eziFile);
 			if(feof(eziFile)){
-				break;
+				if(!isalnum((int)lineBuf[0])){
+					break;
+				}
 			}
 
 			/* keysound_index type filename */
@@ -190,6 +192,7 @@ int main(int argc, char** argv){
 			);
 		}
 
+		printf("%s: wrote output to %s\n",argv[0],argv[2]);
 		free(instruments);
 		fclose(eziFile);
 	}
@@ -213,24 +216,18 @@ int main(int argc, char** argv){
 
 		/* get number of defined instruments */
 		fseek(eziFile,0,SEEK_SET);
-		char *newLine;
 		while(feof(eziFile) == 0){
+			memset(lineBuf,0,sizeof(lineBuf));
 			fgets(lineBuf,sizeof(lineBuf),eziFile);
+
 			if(feof(eziFile)){
-				break;
+				if(!isalnum((int)lineBuf[0])){
+					break;
+				}
 			}
 
-			newLine = strchr(lineBuf,'\n');
-			if(newLine != NULL){
-				if(newLine-lineBuf > 1){
-					numInstruments++;
-				}
-			}
-			else{
-				if(feof(eziFile)){
-					numInstruments++;
-				}
-			}
+			sscanf(lineBuf,"%s %d %s",oldNoteStr,&ins.type,ins.filename);
+			numInstruments++;
 		}
 
 		fseek(eziFile,0,SEEK_SET);
@@ -243,9 +240,12 @@ int main(int argc, char** argv){
 		char *noteName = calloc(4,1);
 		int curInstrument = 0;
 		while(feof(eziFile) == 0){
+			memset(lineBuf,0,sizeof(lineBuf));
 			fgets(lineBuf,sizeof(lineBuf),eziFile);
 			if(feof(eziFile)){
-				break;
+				if(!isalnum((int)lineBuf[0])){
+					break;
+				}
 			}
 
 			/* key_name type filename */
@@ -275,6 +275,7 @@ int main(int argc, char** argv){
 			fprintf(eziFile, "%d %d %s\r\n",instruments[i].index, instruments[i].type, instruments[i].filename);
 		}
 
+		printf("%s: wrote output to %s\n",argv[0],argv[2]);
 		free(instruments);
 		fclose(eziFile);
 	}
