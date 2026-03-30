@@ -6,7 +6,7 @@
 #include <string.h>
 #include "ezfile.h"
 
-static char* TrackSlot[] = {
+static const char* TrackSlot[] = {
 	"Control",
 	"BG L",
 	"BG R",
