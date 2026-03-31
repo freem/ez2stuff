@@ -11,12 +11,13 @@ EZINS = ezins
 EZABM = ezabm
 EZWSSF = ezwssf
 ABM2BMP = abm2bmp
+EZ2BMSON = ez2bmson
 
 .PHONY: all clean default
 
 default: all
 
-all: $(EZINFO) $(EZUNFN) $(EZREFN) $(EZDEC_715) $(EZENC_715) $(EZDEC_720) $(EZENC_720) $(EZINS) $(EZABM) $(EZWSSF) $(ABM2BMP)
+all: $(EZINFO) $(EZUNFN) $(EZREFN) $(EZDEC_715) $(EZENC_715) $(EZDEC_720) $(EZENC_720) $(EZINS) $(EZABM) $(EZWSSF) $(ABM2BMP) $(EZ2BMSON)
 
 $(EZINFO): ezinfo.c
 	$(CC) $(CFLAGS) $^ $(LDFLAGS) -o $@
@@ -49,6 +50,9 @@ $(EZWSSF): ezwssf.c
 	$(CC) $(CFLAGS) $^ $(LDFLAGS) -o $@
 
 $(ABM2BMP): abm2bmp.c
+	$(CC) $(CFLAGS) $^ $(LDFLAGS) -o $@
+
+$(EZ2BMSON): ez2bmson.c
 	$(CC) $(CFLAGS) $^ $(LDFLAGS) -o $@
 
 clean:
