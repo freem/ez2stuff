@@ -12,6 +12,7 @@
 const int MAX_FILENAME_LENGTH = 256;
 const int LINEBUF_SIZE = 512;
 
+/*============================================================================*/
 enum ModeHintIndex {
 	ModeHintIndex_5KOnly = 0,
 	ModeHintIndex_5K = 1,
@@ -135,7 +136,7 @@ const char *ModeHintFromFilename(char *filename){
 	return "unknown";
 }
 
-const int ModeHintToIndex(char *modeHint){
+const int ModeHintToIndex(const char *modeHint){
 	if(strstr(modeHint,ModeHintNames[ModeHintIndex_5KOnly]) != 0){
 		return ModeHintIndex_5KOnly;
 	}
@@ -158,6 +159,7 @@ const int ModeHintToIndex(char *modeHint){
 	return 0;
 }
 
+/*============================================================================*/
 /* SongOriginalName section and its contents are ignored by design */
 enum IniSectionType {
 	IniSectionType_Unset = 0,
@@ -196,6 +198,7 @@ static const char *IniKey_Judge_Good = "Good";
 static const char *IniKey_Judge_Miss = "Miss";
 static const char *IniKey_Judge_Fail = "Fail"; /* GaugeUpDownRate only */
 
+/*============================================================================*/
 const char* OctaveNums = "0123456789";
 
 int KeysoundIndexToInstrument(uint16_t index, uint16_t count, Instrument *instruments){
@@ -207,6 +210,84 @@ int KeysoundIndexToInstrument(uint16_t index, uint16_t count, Instrument *instru
 	return -1;
 }
 
+/*============================================================================*/
+/* .ez to .bmson track mappings */
+const uint8_t TrackMapping_5KOnly_1P[21] = {
+	0,0,0, /* control, old bgm L, old bgm R */
+	11,12,13,14,15, /* left side keys */
+	0,0, /* effectors 1 and 2 */
+	0, /* left side scratch */
+	0, /* left side pedal */
+	0,0, /* effectors 3 and 4 */
+	0, /* right side pedal */
+	0,0,0,0,0, /* right side keys */
+	0 /* right side scratch */
+};
+
+const uint8_t TrackMapping_5K_1P[21] = {
+	0,0,0, /* control, old bgm L, old bgm R */
+	11,12,13,14,15, /* left side keys */
+	0,0, /* effectors 1 and 2 */
+	1, /* left side scratch */
+	10, /* left side pedal */
+	0,0, /* effectors 3 and 4 */
+	0, /* right side pedal */
+	0,0,0,0,0, /* right side keys */
+	0 /* right side scratch */
+};
+
+const uint8_t TrackMapping_7K_1P[21] = {
+	0,0,0, /* control, old bgm L, old bgm R */
+	11,12,13,14,15, /* left side keys */
+	31,32, /* effectors 1 and 2 */
+	1, /* left side scratch */
+	10, /* left side pedal */
+	0,0, /* effectors 3 and 4 */
+	0, /* right side pedal */
+	0,0,0,0,0, /* right side keys */
+	0 /* right side scratch */
+};
+
+const uint8_t TrackMapping_10K_1P[21] = {
+	0,0,0, /* control, old bgm L, old bgm R */
+	11,12,13,14,15, /* left side keys */
+	0,0, /* effectors 1 and 2 */
+	1, /* left side scratch */
+	10, /* left side pedal */
+	0,0, /* effectors 3 and 4 */
+	0, /* right side pedal */
+	21,22,23,24,25, /* right side keys */
+	2 /* right side scratch */
+};
+
+const uint8_t TrackMapping_14K_1P[21] = {
+	0,0,0, /* control, old bgm L, old bgm R */
+	11,12,13,14,15, /* left side keys */
+	31,32, /* effectors 1 and 2 */
+	1, /* left side scratch */
+	0, /* left side pedal */
+	33,34, /* effectors 3 and 4 */
+	0, /* right side pedal */
+	21,22,23,24,25, /* right side keys */
+	2 /* right side scratch */
+};
+
+const uint8_t TrackMapping_Andromeda_1P[21] = {
+	0,0,0, /* control, old bgm L, old bgm R */
+	11,12,13,14,15, /* left side keys */
+	31,32, /* effectors 1 and 2 */
+	1, /* left side scratch */
+	10, /* left side pedal */
+	33,34, /* effectors 3 and 4 */
+	20, /* right side pedal */
+	21,22,23,24,25, /* right side keys */
+	2 /* right side scratch */
+};
+
+/*----------------------------------------------------------------------------*/
+/* 2p side todo */
+
+/*============================================================================*/
 static void Usage(char* execName){
 printf("%s - Converts {.ez, .ezi, .ini} to .bmson\n", execName);
 	printf("Usage: %s [file.ez]\n", execName);
@@ -815,6 +896,7 @@ int main(int argc, char** argv){
 	/* "sound_channels":[], */
 	fputs("\t\"sound_channels\": [\r\n",bmsonOutFile);
 	int curInstrumentIndex = 0;
+	int chartMode = ModeHintToIndex(modeHint);
 	for(int i = 0; i < numInstruments; i++){
 		fputs("\t\t{\r\n",bmsonOutFile);
 
@@ -876,9 +958,33 @@ int main(int argc, char** argv){
 									fputs("\t\t\t\t\t\"x\": 0,\r\n",bmsonOutFile);
 								}
 								else{
-									/* .ez track to input; this relies on multiple factors */
-									/* temp */
-									fputs("\t\t\t\t\t\"x\": 1,\r\n",bmsonOutFile);
+									/* .ez track to input; this relies on chartMode and playerSide */
+									if(playerSide == 1){
+										/* temp */
+										fputs("\t\t\t\t\t\"x\": 1,\r\n",bmsonOutFile);
+									}
+									else{
+										int trackX = -1;
+										if(chartMode == ModeHintIndex_5KOnly){
+											trackX = TrackMapping_5KOnly_1P[t];
+										}
+										else if(chartMode == ModeHintIndex_5K){
+											trackX = TrackMapping_5K_1P[t];
+										}
+										else if(chartMode == ModeHintIndex_7K){
+											trackX = TrackMapping_7K_1P[t];
+										}
+										else if(chartMode == ModeHintIndex_10K){
+											trackX = TrackMapping_10K_1P[t];
+										}
+										else if(chartMode == ModeHintIndex_14K){
+											trackX = TrackMapping_14K_1P[t];
+										}
+										else if(chartMode == ModeHintIndex_Andromeda){
+											trackX = TrackMapping_Andromeda_1P[t];
+										}
+										fprintf(bmsonOutFile,"\t\t\t\t\t\"x\": %d,\r\n",trackX);
+									}
 								}
 
 								fprintf(bmsonOutFile,"\t\t\t\t\t\"y\": %d\r\n",targetPulse);
@@ -924,9 +1030,33 @@ int main(int argc, char** argv){
 									fputs("\t\t\t\t\t\"x\": 0,\r\n",bmsonOutFile);
 								}
 								else{
-									/* .ez track to input; this relies on multiple factors */
-									/* temp */
-									fputs("\t\t\t\t\t\"x\": 1,\r\n",bmsonOutFile);
+									/* .ez track to input; this relies on chartMode and playerSide */
+									if(playerSide == 1){
+										/* temp */
+										fputs("\t\t\t\t\t\"x\": 1,\r\n",bmsonOutFile);
+									}
+									else{
+										int trackX = -1;
+										if(chartMode == ModeHintIndex_5KOnly){
+											trackX = TrackMapping_5KOnly_1P[t];
+										}
+										else if(chartMode == ModeHintIndex_5K){
+											trackX = TrackMapping_5K_1P[t];
+										}
+										else if(chartMode == ModeHintIndex_7K){
+											trackX = TrackMapping_7K_1P[t];
+										}
+										else if(chartMode == ModeHintIndex_10K){
+											trackX = TrackMapping_10K_1P[t];
+										}
+										else if(chartMode == ModeHintIndex_14K){
+											trackX = TrackMapping_14K_1P[t];
+										}
+										else if(chartMode == ModeHintIndex_Andromeda){
+											trackX = TrackMapping_Andromeda_1P[t];
+										}
+										fprintf(bmsonOutFile,"\t\t\t\t\t\"x\": %d,\r\n",trackX);
+									}
 								}
 
 								fprintf(bmsonOutFile,"\t\t\t\t\t\"y\": %d\r\n",targetPulse);
@@ -972,9 +1102,33 @@ int main(int argc, char** argv){
 									fputs("\t\t\t\t\t\"x\": 0,\r\n",bmsonOutFile);
 								}
 								else{
-									/* .ez track to input; this relies on multiple factors */
-									/* temp */
-									fputs("\t\t\t\t\t\"x\": 1,\r\n",bmsonOutFile);
+									/* .ez track to input; this relies on chartMode and playerSide */
+									if(playerSide == 1){
+										/* temp */
+										fputs("\t\t\t\t\t\"x\": 1,\r\n",bmsonOutFile);
+									}
+									else{
+										int trackX = -1;
+										if(chartMode == ModeHintIndex_5KOnly){
+											trackX = TrackMapping_5KOnly_1P[t];
+										}
+										else if(chartMode == ModeHintIndex_5K){
+											trackX = TrackMapping_5K_1P[t];
+										}
+										else if(chartMode == ModeHintIndex_7K){
+											trackX = TrackMapping_7K_1P[t];
+										}
+										else if(chartMode == ModeHintIndex_10K){
+											trackX = TrackMapping_10K_1P[t];
+										}
+										else if(chartMode == ModeHintIndex_14K){
+											trackX = TrackMapping_14K_1P[t];
+										}
+										else if(chartMode == ModeHintIndex_Andromeda){
+											trackX = TrackMapping_Andromeda_1P[t];
+										}
+										fprintf(bmsonOutFile,"\t\t\t\t\t\"x\": %d,\r\n",trackX);
+									}
 								}
 
 								fprintf(bmsonOutFile,"\t\t\t\t\t\"y\": %d\r\n",targetPulse);
