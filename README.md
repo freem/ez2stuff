@@ -63,7 +63,7 @@ Usage:
 - `abm2bmp filename.abm [outfile.bmp]`
 
 This program performs the same action as `ezabm --tobmp auto`, but unlike
-`ezabm`, you can drag and drop files onto the executable.
+`ezabm`, you can drag and drop a file onto the executable.
 
 ## `ezwssf`
 Utility related to `.ezw`/`.ssf` and `.wav` files.
