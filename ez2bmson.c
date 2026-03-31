@@ -584,8 +584,8 @@ int main(int argc, char** argv){
 
 	/* read track data */
 	Track tracks[EzFileHeader.numTracks];
-	uint32_t lastInstrumentNotePos[numInstruments];
-	memset(lastInstrumentNotePos,0,numInstruments*sizeof(uint32_t));
+	uint32_t instrumentNoteCount[numInstruments];
+	memset(instrumentNoteCount,0,numInstruments*sizeof(uint32_t));
 
 	for(int i = 0 ; i < EzFileHeader.numTracks; i++){
 		fgets(tracks[i].magic,5,ezFile);
@@ -623,20 +623,29 @@ int main(int argc, char** argv){
 				if(EzFileHeader.version >= 7){
 					uint16_t thisKeysound = (tracks[i].notes[n].data.v7[1]) << 8 | (tracks[i].notes[n].data.v7[0] & 0xFF);
 					int instIndex = KeysoundIndexToInstrument(thisKeysound,numInstruments,instruments);
-					if(instIndex >= 0 && tracks[i].notes[n].position > lastInstrumentNotePos[instIndex] && tracks[i].notes[n].position < EzFileHeader.totalTicks){
-						lastInstrumentNotePos[instIndex] = tracks[i].notes[n].position;
+					if(tracks[i].notes[n].position < EzFileHeader.totalTicks){
+						instrumentNoteCount[instIndex]++;
+					}
+					else{
+						printf("track %d weird note pos %d\n",i,tracks[i].notes[n].position);
 					}
 				}
 				else if(EzFileHeader.version >= 5){
 					int instIndex = KeysoundIndexToInstrument(tracks[i].notes[n].data.v5[0],numInstruments,instruments);
-					if(instIndex >= 0 && tracks[i].notes[n].position > lastInstrumentNotePos[instIndex] && tracks[i].notes[n].position < EzFileHeader.totalTicks){
-						lastInstrumentNotePos[instIndex] = tracks[i].notes[n].position;
+					if(tracks[i].notes[n].position < EzFileHeader.totalTicks){
+						instrumentNoteCount[instIndex]++;
+					}
+					else{
+						printf("track %d weird note pos %d\n",i,tracks[i].notes[n].position);
 					}
 				}
 				else{
 					int instIndex = KeysoundIndexToInstrument(tracks[i].notes[n].data.v4[0],numInstruments,instruments);
-					if(instIndex >= 0 && tracks[i].notes[n].position > lastInstrumentNotePos[instIndex] && tracks[i].notes[n].position < EzFileHeader.totalTicks){
-						lastInstrumentNotePos[instIndex] = tracks[i].notes[n].position;
+					if(tracks[i].notes[n].position < EzFileHeader.totalTicks){
+						instrumentNoteCount[instIndex]++;
+					}
+					else{
+						printf("track %d weird note pos %d\n",i,tracks[i].notes[n].position);
 					}
 				}
 			}
@@ -821,6 +830,7 @@ int main(int argc, char** argv){
 		 * y (int) time in pulses
 		 */
 		curInstrumentIndex = instruments[i].index;
+		int numInstrNotes = 0;
 		for(int t = 0; t < EzFileHeader.numTracks; t++){
 			/* only bother processing tracks with data */
 			if(tracks[t].dataSize > 0){
@@ -835,6 +845,7 @@ int main(int argc, char** argv){
 						if(EzFileHeader.version >= 7){
 							uint16_t thisKeysound = (tracks[t].notes[n].data.v7[1]) << 8 | (tracks[t].notes[n].data.v7[0] & 0xFF);
 							if(thisKeysound == curInstrumentIndex){
+								numInstrNotes++;
 								float relativePos = (float)tracks[t].notes[n].position/(float)(EzFileHeader.ticksPerMeasure);
 								uint32_t targetPulse = (uint32_t)(relativePos*(BMSON_DEFAULT_RESOLUTION*4));
 								/*
@@ -872,7 +883,7 @@ int main(int argc, char** argv){
 
 								fprintf(bmsonOutFile,"\t\t\t\t\t\"y\": %d\r\n",targetPulse);
 
-								if(tracks[t].notes[n].position == lastInstrumentNotePos[i]){
+								if(numInstrNotes == instrumentNoteCount[i]){
 									fputs("\t\t\t\t}\r\n",bmsonOutFile);
 								}
 								else{
@@ -882,6 +893,7 @@ int main(int argc, char** argv){
 						}
 						else if(EzFileHeader.version >= 5){
 							if(tracks[t].notes[n].data.v5[0] == curInstrumentIndex){
+								numInstrNotes++;
 								float relativePos = (float)tracks[t].notes[n].position/(float)(EzFileHeader.ticksPerMeasure);
 								uint32_t targetPulse = (uint32_t)(relativePos*(BMSON_DEFAULT_RESOLUTION*4));
 								/*
@@ -919,7 +931,7 @@ int main(int argc, char** argv){
 
 								fprintf(bmsonOutFile,"\t\t\t\t\t\"y\": %d\r\n",targetPulse);
 
-								if(tracks[t].notes[n].position == lastInstrumentNotePos[i]){
+								if(numInstrNotes == instrumentNoteCount[i]){
 									fputs("\t\t\t\t}\r\n",bmsonOutFile);
 								}
 								else{
@@ -929,6 +941,7 @@ int main(int argc, char** argv){
 						}
 						else{
 							if(tracks[t].notes[n].data.v4[0] == curInstrumentIndex){
+								numInstrNotes++;
 								float relativePos = (float)tracks[t].notes[n].position/(float)(EzFileHeader.ticksPerMeasure);
 								uint32_t targetPulse = (uint32_t)(relativePos*(BMSON_DEFAULT_RESOLUTION*4));
 								/*
@@ -966,7 +979,7 @@ int main(int argc, char** argv){
 
 								fprintf(bmsonOutFile,"\t\t\t\t\t\"y\": %d\r\n",targetPulse);
 
-								if(tracks[t].notes[n].position == lastInstrumentNotePos[i]){
+								if(numInstrNotes == instrumentNoteCount[i]){
 									fputs("\t\t\t\t}\r\n",bmsonOutFile);
 								}
 								else{
