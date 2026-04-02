@@ -25,16 +25,19 @@ Displays the following information:
 - per-track data, including notes (handles commands 1-4)
 
 ## `ezins`
-Displays information about (decoded) `.ezi` files. Both old and new versions
-are supported.
+Utility related to (decoded) `.ezi` files. Both old and new versions are supported.
 
-Usage: `ezins [file.ezi]`
+Usage:
+- `ezins --info file.ezi` to get information about an `.ezi` file.
+- `ezins --old file.ezi` to convert a new format `.ezi` to the old format.
+- `ezins --new file.ezi` to convert an old format `.ezi` to the new format.
 
-Displays:
+The `--info` option displays:
 - format type ("new" or "old)
 - each entry, including equivalent keysound index (for old files) or key/octave pair (for new files; 0-255 only)
+- notices if there are too many keysounds defined (256 for old version, 2048 for new version)
 
-Converting between `.ezi` versions is not yet available, but is planned.
+When converting between versions, the input file is *overwritten*, so be careful.
 
 ## `ezabm`
 Utility related to `.abm` and `.bmp` files.
