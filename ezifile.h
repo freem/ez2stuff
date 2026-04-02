@@ -7,6 +7,9 @@
  * There are two versions of .ezi files, which I will call "old" and "new".
  */
 
+#define MAX_INSTRUMENTS_OLD 256
+#define MAX_INSTRUMENTS_NEW 2048
+
 /* The "old" version assigns notes based on key and octave. */
 const char* OldNoteNames[] = {
 	"C","C#","D","D#","E","F","F#","G","G#","A","A#","B"
@@ -27,7 +30,7 @@ typedef struct{
 
 /* Converts a keysound number (0-255) to an index to use with OldNoteNames. */
 static uint8_t KeysoundIndexToNote(int index){
-	if(index > 255){
+	if(index > MAX_INSTRUMENTS_OLD-1){
 		return -1;
 	}
 	return (index % OLDNOTE_NOTE_VALUES);
@@ -35,7 +38,7 @@ static uint8_t KeysoundIndexToNote(int index){
 
 /* Converts a keysound number (0-255) to an octave value. */
 static uint8_t KeysoundIndexToOctave(int index){
-	if(index > 255){
+	if(index > MAX_INSTRUMENTS_OLD-1){
 		return -1;
 	}
 	return floor(index / OLDNOTE_NOTE_VALUES);

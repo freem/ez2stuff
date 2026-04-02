@@ -85,8 +85,11 @@ int main(int argc, char** argv){
 			if(fileVer == 1){
 				// keysound_index type filename
 				sscanf(lineBuf,"%hi %d %s",&ins.index,&ins.type,ins.filename);
-				if(ins.index < 256){
+				if(ins.index < MAX_INSTRUMENTS_OLD){
 					printf("%hi (== %s%d) %d %s",ins.index,OldNoteNames[KeysoundIndexToNote(ins.index)],KeysoundIndexToOctave(ins.index),ins.type,ins.filename);
+				}
+				else if(ins.index > MAX_INSTRUMENTS_NEW){
+					printf("%hi (invalid) %d %s",ins.index,ins.type,ins.filename);
 				}
 				else{
 					printf("%hi (n/a) %d %s",ins.index,ins.type,ins.filename);
@@ -151,7 +154,7 @@ int main(int argc, char** argv){
 			numInstruments++;
 		}
 
-		if(numInstruments > 256){
+		if(numInstruments > MAX_INSTRUMENTS_OLD){
 			printf("Error: Too many instruments defined for old format; found %d (maximum 256)\n",numInstruments);
 			exit(EXIT_FAILURE);
 		}
@@ -228,6 +231,11 @@ int main(int argc, char** argv){
 
 			sscanf(lineBuf,"%s %d %s",oldNoteStr,&ins.type,ins.filename);
 			numInstruments++;
+		}
+
+		if(numInstruments > MAX_INSTRUMENTS_NEW){
+			printf("Error: Too many instruments defined for new format; found %d (maximum 2048)\n",numInstruments);
+			exit(EXIT_FAILURE);
 		}
 
 		fseek(eziFile,0,SEEK_SET);
