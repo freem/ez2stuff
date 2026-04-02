@@ -6,6 +6,7 @@
 #include <string.h>
 #include "ezfile.h"
 
+/* v6 and above */
 static const char* TrackSlot[] = {
 	"Control",
 	"BG L",
@@ -31,6 +32,29 @@ static const char* TrackSlot[] = {
 	"Lights",
 };
 
+/* v5 and below */
+static const char* TrackSlot_Old[] = {
+	"Control",
+	"BG L",
+	"BG R",
+	"1P Key1",
+	"1P Key2",
+	"1P Key3",
+	"1P Key4",
+	"1P Key5",
+	"1P Scratch",
+	"1P Pedal",
+	"2P Key1",
+	"2P Key2",
+	"2P Key3",
+	"2P Key4",
+	"2P Key5",
+	"2P Scratch",
+	"2P Pedal",
+	"Lights",
+};
+
+/*============================================================================*/
 static void Usage(char* execName){
 	printf("%s - Prints information about .ez files\n", execName);
 	printf("Usage: %s [file.ez]\n", execName);
@@ -183,12 +207,23 @@ int main(int argc, char** argv){
 	for(int i = 0; i < headerData.numTracks; i++){
 		int numNotes = tracks[i].dataSize/noteBytes;
 		printf("--------------------\n");
-		if(i < 22){
-			printf("Track %d [%s]\n",i,TrackSlot[i]);
+		if(headerData.version >= 6){
+			if(i < 22){
+				printf("Track %d [%s]\n",i,TrackSlot[i]);
+			}
+			else{
+				printf("Track %d [BGM]\n",i);
+			}
 		}
 		else{
-			printf("Track %d [BGM]\n",i);
+			if(i < 18){
+				printf("Track %d [%s]\n",i,TrackSlot_Old[i]);
+			}
+			else{
+				printf("Track %d [BGM]\n",i);
+			}
 		}
+
 		printf("name: %s\n",tracks[i].name);
 		printf("numTicks: %u (0x%08X)\n",tracks[i].numTicks,tracks[i].numTicks);
 		printf("dataSize: %u (0x%08X)\n",tracks[i].dataSize,tracks[i].dataSize);
