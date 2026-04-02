@@ -10,6 +10,11 @@ const char Magic_EZFF_7th_1dot5[4] = { 0x4A, 0x5B, 0x48, 0x49 }; /* "J[HI" */
 
 const float OldBpmFactor = 0.9972299168975069f;
 
+typedef union {
+	float f;
+	uint32_t u;
+} EzBpm;
+
 /*----------------------------------------------------------------------------*/
 /* .ez header data */
 typedef struct{
@@ -22,19 +27,10 @@ typedef struct{
 	/* another 0x40 bytes skipped; perhaps this was used at one time, but not now */
 
 	uint16_t ticksPerMeasure;
-
-	union {
-		float f;
-		uint32_t u;
-	} initialBPM;
-
+	EzBpm initialBPM;
 	uint16_t numTracks;
 	uint32_t totalTicks; /* determined by the largest track numTicks value */
-
-	union {
-		float f;
-		uint32_t u;
-	} secondBPM;
+	EzBpm secondBPM;
 } EzHeader;
 
 /*----------------------------------------------------------------------------*/

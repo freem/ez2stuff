@@ -154,10 +154,7 @@ int main(int argc, char** argv){
 	}
 	printf("ticks/measure:\t%hu (0x%04X)\n",headerData.ticksPerMeasure,headerData.ticksPerMeasure);
 	if(headerData.version <= 5){
-		union {
-			float f;
-			uint32_t u;
-		} AdjustedBPM;
+		EzBpm AdjustedBPM;
 		AdjustedBPM.f = headerData.initialBPM.f * OldBpmFactor;
 		printf("initial BPM:\t%f (0x%X) | adjusted: %f (0x%X)\n",
 			headerData.initialBPM.f,headerData.initialBPM.u,
@@ -170,10 +167,7 @@ int main(int argc, char** argv){
 	printf("track count:\t%i\n",headerData.numTracks);
 	printf("total ticks:\t%u (0x%08X)\n",headerData.totalTicks,headerData.totalTicks);
 	if(headerData.version <= 5){
-		union {
-			float f;
-			uint32_t u;
-		} AdjustedBPM;
+		EzBpm AdjustedBPM;
 		AdjustedBPM.f = headerData.secondBPM.f * OldBpmFactor;
 		printf("other BPM:\t%f (0x%X) | adjusted: %f (0x%X)\n",
 			headerData.secondBPM.f,headerData.secondBPM.u,
