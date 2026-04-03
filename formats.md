@@ -93,6 +93,37 @@ Track data follows, starting at file offset 0x96.
 
 Note data follows.
 
+### Track Order/Numbering
+Each track serves a specific purpose. The meaning of these tracks differs based
+on the `.ez` file version. Versions 5 and below do not have the Effector buttons,
+while Versions 6 and above do.
+
+| Track | v5 Usage   | v6 Usage   |
+|-------|------------|------------|
+| 0     | Control    | Control    |
+| 1     | BG L       | BG L       |
+| 2     | BG R       | BG R       |
+| 3     | 1P Key1    | 1P Key1    |
+| 4     | 1P Key2    | 1P Key2    |
+| 5     | 1P Key3    | 1P Key3    |
+| 6     | 1P Key4    | 1P Key4    |
+| 7     | 1P Key5    | 1P Key5    |
+| 8     | 1P Scratch | Effector 1 |
+| 9     | 1P Pedal   | Effector 2 |
+| 10    | 2P Key1    | 1P Scratch |
+| 11    | 2P Key2    | 1P Pedal   |
+| 12    | 2P Key3    | Effector 3 |
+| 13    | 2P Key4    | Effector 4 |
+| 14    | 2P Key5    | 2P Key1    |
+| 15    | 2P Scratch | 2P Key2    |
+| 16    | 2P Pedal   | 2P Key3    |
+| 17    | Lights     | 2P Key4    |
+| 18    | BG Tracks  | 2P Key5    |
+| 19    | BG Tracks  | 2P Scratch |
+| 20    | BG Tracks  | 2P Pedal   |
+| 21    | BG Tracks  | Lights     |
+| 22+   | BG Tracks  | BG Tracks  |
+
 ### Note Data
 The note data format changes per version, mainly in the number of argument bytes.
 
@@ -122,7 +153,8 @@ Pan range is 0x00-0x7F, with 0x40 meaning center. 0x00 is presumed to be fully
 panned left, 0x7F is presumed to be fully panned right.
 
 Regular notes have a length of 6. Anything higher than that is considered a hold note.
-Anything lower than that is untested.
+Anything lower than that is untested. To obtain the "proper" hold length, subtract 6
+from the given value.
 
 #### Volume Params
 Valid values are 0x00-0x7F.
@@ -139,6 +171,8 @@ All BPMs are floating point.
 - v7,v8 &ndash; [bpm bpm bpm bpm] [0] [0] [0] [0]
 
 #### Beats per Measure Params
+Valid values are 0x01-0x80.
+
 - v4 &ndash; [beats_per_measure] [0] [0] [0] [0]
 - v5,v6 &ndash; [beats_per_measure] [0] [0] [0] [0] [0]
 - v7,v8 &ndash; [beats_per_measure] [0] [0] [0] [0] [0] [0] [0]
@@ -150,7 +184,7 @@ Text-based format that defines the available instruments/keysounds.
 
 There are two versions:
 - "old" uses key names and octaves for keysounds, can only support up to 256 sounds.
-- "new" uses indices for keysounds, can support more than 256 sounds.
+- "new" uses indices for keysounds, can support up to 2048 sounds.
 
 General format is `[note/index] [velocity] [filename]`. I have only seen velocity
 be 0 and 1. Unsure if other values are supported or not.
@@ -169,7 +203,39 @@ The note is now a numerical index. Otherwise, the format is the same.
 
 -----
 
+## `music.ini`
+Defines song information, including difficulty, judgment levels, and gauge changes.
+Found in 1st Tracks and 1st Trax SE.
+
+Each song has its own section, using the directory name.
+
+### Standard values
+- `level` &ndash; [int] Chart difficulty level.
+- `clubmixlevel` &ndash; [int] Club Mix chart difficulty level. (1st SE only)
+- `bpm` &ndash [int] Displayed BPM value.
+- `cool` &ndash; [string] List of three Cool judgment delta values, separated by semicolons. (example `"3;2;3"`)
+- `good` &ndash; [string] List of three Good judgment delta values, separated by semicolons. (example `"6;6;8"`)
+- `miss` &ndash; [string] List of three Miss judgment delta values, separated by semicolons. (example `"10;10;12"`)
+- `COOL_GAUGEUP` &ndash; [string] List of three meter gauge up values, separated by semicolons. (example `"0.5;0.4;0.2"`)
+- `good_GAUGEUP` &ndash; [string] List of three meter gauge up values, separated by semicolons. (example `"0.2;0.1;0.1"`)
+- `miss_GAUGEDOWN` &ndash; [string] List of three meter gauge down values, separated by semicolons. (example `"4;4;2"`)
+- `FAIL_GAUGEDOWN` &ndash; [string] List of three meter gauge down values, separated by semicolons. (example `"7;7;3"`)
+- `MeasureScale` &ndash; [float]
+
+### 4D Mode-specific values
+Only appears in 1st SE, as 4D Mode becomes a modifier later.
+- `MS_TRACK1` &ndash; [float]
+- `MS_TRACK2` &ndash; [float]
+- `MS_TRACK3` &ndash; [float]
+- `MS_TRACK4` &ndash; [float]
+- `MS_TRACK5` &ndash; [float]
+- `MS_TRACK6` &ndash; [float]
+- `MS_TRACK7` &ndash; [float]
+
+-----
+
 ## Per-chart `.ini`
+Replaces `music.ini` starting in 2nd Trax.
 
 ### `[General]`
 - `Level` &ndash; [int] Chart difficulty level.
@@ -188,8 +254,8 @@ The note is now a numerical index. Otherwise, the format is the same.
 - `Fail` &ndash; [float]
 
 ### `[SongOriginalName]`
-- `Name`
-- `Version`
+- `Name` &ndash;
+- `Version` &ndash; [int]
 
 -----
 
@@ -737,9 +803,7 @@ Defines the Ruby Mix life gauge.
 - `Texture`
 - `FinalTexture`
 
-(todo)
-
-FastSlowTex, GroupTexture
+(todo: FastSlowTex, GroupTexture)
 
 -----
 
